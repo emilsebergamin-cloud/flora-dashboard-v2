@@ -11,6 +11,20 @@ export default function Modal({ open, onClose, title, children }) {
     return () => window.removeEventListener('keydown', handler);
   }, [open, onClose]);
 
+  // Bloquea el scroll del fondo mientras el modal está abierto
+  useEffect(() => {
+    if (!open) return;
+    const main = document.querySelector('main');
+    const prevBody = document.body.style.overflow;
+    const prevMain = main?.style.overflow ?? '';
+    document.body.style.overflow = 'hidden';
+    if (main) main.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevBody;
+      if (main) main.style.overflow = prevMain;
+    };
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -29,7 +43,7 @@ export default function Modal({ open, onClose, title, children }) {
 
           {/* Panel */}
           <motion.div
-            className="relative z-10 w-full max-w-lg bg-blanco rounded-3xl shadow-xl p-6 md:p-8 max-h-[88vh] overflow-y-auto"
+            className="relative z-10 w-full max-w-lg bg-blanco rounded-3xl shadow-xl p-6 md:p-8 max-h-[88vh] overflow-y-auto overscroll-contain"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 40, opacity: 0 }}
