@@ -23,7 +23,7 @@ export default function Ideas() {
 
       {/* Pipeline kanban arriba */}
       <section className="mb-10">
-        <p className="font-body text-xs text-texto font-semibold uppercase tracking-widest mb-3">Pipeline</p>
+        <p className="font-body text-xs text-texto font-semibold uppercase tracking-widest mb-3">Ideas en proceso</p>
         <Pipeline />
       </section>
 

@@ -228,7 +228,7 @@ export default function Inicio() {
     { label: 'Posts este mes',      value: postsEsteMes,  color: 'text-rosa-viejo'  },
     { label: 'En borrador',         value: enBorrador,    color: 'text-texto'      },
     { label: 'Stories esta semana', value: storiesSemana, color: 'text-verde-seco'  },
-    { label: 'Ideas en pipeline',   value: ideasPipeline, color: 'text-texto'      },
+    { label: 'Ideas en proceso',    value: ideasPipeline, color: 'text-texto'      },
   ];
 
   return (
