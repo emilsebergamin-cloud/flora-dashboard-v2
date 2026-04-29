@@ -24,6 +24,12 @@ function buildCalendarDays(year, month) {
   return days;
 }
 
+// Parsea "YYYY-MM-DD" como fecha LOCAL para evitar desfase de timezone UTC.
+function parseLocalDate(str) {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 // Devuelve el día del mes al que corresponde semana+dia.
 function storyDayInMonth(semana, dia, year, month) {
   const targetDow = DIA_TO_DOW[dia];
@@ -92,7 +98,7 @@ export default function Calendario() {
     // Contenido con fecha ISO ("YYYY-MM-DD")
     (dashboard.content ?? []).forEach((item) => {
       if (!item.date) return;
-      const d = new Date(item.date);
+      const d = parseLocalDate(item.date);
       if (d.getFullYear() !== year || d.getMonth() !== month) return;
       add(d.getDate(), {
         _tipo:   item.type ?? 'post',
@@ -196,21 +202,26 @@ export default function Calendario() {
             const items     = filtro === 'todos' ? allItems : allItems.filter((it) => it._tipo === filtro);
             const isToday   = isCurrentMonth && day === todayDay;
 
+            const hasItems = items.length > 0;
+
             return (
               <div key={i}
                 className={[
-                  'min-h-[60px] sm:min-h-[90px] p-1 sm:p-1.5 border-b border-beige-2',
+                  'min-h-[60px] sm:min-h-[100px] p-1 sm:p-1.5 border-b border-beige-2 transition-colors',
                   isLastCol ? '' : 'border-r border-beige-2',
-                  !day ? 'bg-beige-1/20' : '',
+                  !day                    ? 'bg-beige-1/20' :
+                  hasItems && !isToday    ? 'bg-beige-1/50' : '',
                 ].join(' ')}>
 
                 {day && (
                   <>
-                    <div className="flex justify-end mb-0.5 sm:mb-1">
+                    <div className="flex justify-end mb-1">
                       <span className={[
                         'font-body text-[10px] sm:text-[11px] w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full',
                         isToday
                           ? 'bg-rosa-viejo text-blanco font-semibold'
+                          : hasItems
+                          ? 'text-texto font-semibold'
                           : 'text-texto-suave',
                       ].join(' ')}>
                         {day}
@@ -218,12 +229,12 @@ export default function Calendario() {
                     </div>
 
                     {/* Mobile: puntos de color */}
-                    <div className="flex flex-wrap gap-0.5 sm:hidden">
+                    <div className="flex flex-wrap gap-1 sm:hidden">
                       {items.slice(0, 3).map((item, j) => {
                         const { bg } = chipStyle(item._tipo);
                         return (
                           <button key={j} onClick={() => setSelected(item)}
-                            className={`w-2 h-2 rounded-sm ${bg} hover:opacity-75 transition-opacity`} />
+                            className={`w-2.5 h-2.5 rounded-sm ${bg} hover:opacity-75 transition-opacity`} />
                         );
                       })}
                       {items.length > 3 && (
@@ -236,13 +247,13 @@ export default function Calendario() {
                     </div>
 
                     {/* Desktop: chips con texto */}
-                    <div className="hidden sm:flex flex-col gap-0.5">
+                    <div className="hidden sm:flex flex-col gap-1">
                       {items.slice(0, 3).map((item, j) => {
                         const { bg, text } = chipStyle(item._tipo);
                         return (
                           <button key={j}
                             onClick={() => setSelected(item)}
-                            className={`w-full text-left font-body text-[10px] font-medium px-1.5 py-[2px] rounded truncate leading-tight ${bg} ${text} hover:opacity-75 transition-opacity`}>
+                            className={`w-full text-left font-body text-[11px] font-medium px-2 py-[3px] rounded-md truncate leading-tight ${bg} ${text} hover:opacity-80 transition-opacity`}>
                             {item._label}
                           </button>
                         );
