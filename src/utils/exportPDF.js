@@ -42,15 +42,32 @@ export async function exportPDF(htmlContent, filename) {
     <!DOCTYPE html><html><head><meta charset="UTF-8">
     <style>${BASE_STYLES}</style></head>
     <body><div class="page">${htmlContent}</div></body></html>`;
-  await html2pdf()
-    .from(container)
-    .set({
-      filename,
-      margin: [14, 14, 14, 14],
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    })
-    .save();
+
+  const opt = {
+    filename,
+    margin: [14, 14, 14, 14],
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+  };
+
+  const blob = await html2pdf().from(container).set(opt).output('blob');
+  const file = new File([blob], filename, { type: 'application/pdf' });
+
+  // Mobile: abre el menú nativo de compartir (WhatsApp, Guardar en archivos, etc.)
+  if (navigator.canShare?.({ files: [file] })) {
+    await navigator.share({ files: [file], title: filename });
+    return;
+  }
+
+  // Desktop: descarga directa
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
 
 // ─── Generadores por sección ──────────────────────────────────────────────────
