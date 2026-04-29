@@ -285,22 +285,22 @@ export default function Moodboard() {
         <p className="font-body text-xs text-texto-suave font-medium uppercase tracking-wide mb-4">
           Paleta de marca — click para copiar hex
         </p>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2 sm:gap-4">
           {PALETA_MARCA.map(({ hex, nombre }) => {
             const copied = copiedHex === hex;
             return (
               <button
                 key={hex}
                 onClick={() => handleCopyBrand(hex)}
-                className="flex flex-col items-center gap-1.5 group">
+                className="flex flex-col items-center gap-1 sm:gap-1.5 group">
                 <div
-                  className="w-12 h-12 rounded-xl border border-beige-2 shadow-sm transition-transform group-hover:scale-110"
+                  className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl border border-beige-2 shadow-sm transition-transform group-hover:scale-110"
                   style={{ backgroundColor: hex }}
                 />
-                <span className="font-body text-[9px] text-texto text-center leading-tight">
+                <span className="font-body text-[8px] sm:text-[9px] text-texto text-center leading-tight">
                   {nombre}
                 </span>
-                <span className={`font-body text-[9px] text-center leading-none uppercase transition-colors ${copied ? 'text-verde-hover font-medium' : 'text-texto-suave'}`}>
+                <span className={`font-body text-[8px] sm:text-[9px] text-center leading-none uppercase transition-colors ${copied ? 'text-verde-hover font-medium' : 'text-texto-suave'}`}>
                   {copied ? '✓ copiado' : hex}
                 </span>
               </button>
