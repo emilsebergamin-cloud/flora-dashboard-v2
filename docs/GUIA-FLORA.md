@@ -156,9 +156,30 @@ Dentro de ese rango, busca el día de la semana que corresponde. Por ejemplo, un
 
 ## 6. Moodboard
 
-(Próximamente — Fase 5 Paso 15)
+Tu tablero de inspiración visual. Acá guardás todo lo que define la estética y el estilo de tu marca.
 
-Grid visual de imágenes de inspiración, paletas de color y referencias estéticas.
+### Paleta de marca
+- Siempre visible en la parte de arriba: los 10 colores oficiales de tu marca con sus nombres.
+- Hacé click en cualquier color para **copiar el código hex** al portapapeles. Aparece un "✓" como confirmación.
+
+### Imágenes
+- Subí referencias visuales, fotos de inspiración, screenshots, texturas, tipografías — lo que uses para mantener coherencia estética.
+- **Click en "+ Nueva imagen"** → abre un panel donde podés:
+  - Arrastrar una imagen o hacer click para seleccionar.
+  - Agregar un título (opcional).
+  - Agregar etiquetas (ej: "inspiración", "texturas") — elegís de las sugeridas o escribís la tuya y apretás Enter.
+- Las imágenes se guardan en la nube (Firebase Storage) y aparecen en la grilla.
+- **Click en una imagen** → la abre en pantalla completa (lightbox).
+- **Hover** sobre una imagen → aparecen botones para hacer zoom o eliminar.
+
+### Paletas
+- Creá paletas personalizadas de 2 a 8 colores.
+- **Click en "+ Nueva paleta"** → elegís los colores con el selector, ponés un nombre y notas opcionales.
+- En cada paleta podés **hacer click en un color** para copiar su hex.
+
+### Filtros
+- Pills arriba para ver **Todos / Imágenes / Paletas**.
+- El contador de ítems se actualiza según el filtro activo.
 
 ---
 

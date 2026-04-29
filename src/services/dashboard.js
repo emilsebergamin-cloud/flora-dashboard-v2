@@ -61,6 +61,7 @@ function mergeWithDefaults(data) {
         ...(data.ideas?.pipeline ?? {}),
       },
     },
+    mood: Array.isArray(data.mood) ? data.mood : [],
   };
 }
 
