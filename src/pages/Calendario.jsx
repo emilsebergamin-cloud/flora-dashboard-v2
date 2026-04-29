@@ -277,13 +277,19 @@ export default function Calendario() {
       {/* Panel de detalle al hacer click en un chip */}
       {selected && (
         <div
-          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-4 bg-texto/10 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-end md:items-center justify-center md:p-4 bg-texto/20 backdrop-blur-sm"
           onClick={() => setSelected(null)}>
           <div
-            className="bg-blanco border border-beige-2 rounded-2xl p-5 w-full max-w-sm shadow-lg"
+            className="bg-blanco border border-beige-2 rounded-t-2xl md:rounded-2xl w-full max-w-sm shadow-lg max-h-[85vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}>
 
-            <div className="flex items-start justify-between mb-3">
+            {/* Drag handle (solo mobile) */}
+            <div className="md:hidden flex justify-center pt-2 pb-1 shrink-0">
+              <span className="w-10 h-1 rounded-full bg-beige-3" />
+            </div>
+
+            {/* Header sticky */}
+            <div className="flex items-start justify-between px-5 pt-3 pb-3 shrink-0 border-b border-beige-2">
               {selected._tipo === '__more' ? (
                 <p className="font-body text-sm text-texto font-medium">
                   {selected._day} {MESES_ES[month]} — todos los ítems
@@ -299,48 +305,51 @@ export default function Calendario() {
               </button>
             </div>
 
-            {/* Vista "más items" del día */}
-            {selected._tipo === '__more' ? (
-              <div className="flex flex-col gap-2">
-                {selected._items.map((item, i) => {
-                  const { bg, text, label } = chipStyle(item._tipo);
-                  return (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className={`font-body text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 mt-0.5 ${bg} ${text}`}>
-                        {label}
-                      </span>
-                      <p className="font-body text-xs text-texto leading-snug">{item._label}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Detalle individual */
-              <div className="flex flex-col gap-1.5">
-                <p className="font-body text-sm text-texto font-medium leading-snug">{selected._label}</p>
-                {selected.category && (
-                  <p className="font-body text-xs text-texto-suave">Categoría: {selected.category}</p>
-                )}
-                {(selected.status || selected.estado) && (
-                  <p className="font-body text-xs text-texto-suave">
-                    Estado: {selected.status ?? selected.estado}
-                  </p>
-                )}
-                {selected.date && (
-                  <p className="font-body text-xs text-texto-suave">{selected.date}</p>
-                )}
-                {selected.mes && (
-                  <p className="font-body text-xs text-texto-suave">
-                    S{selected.semana} · {selected.dia} · {selected.mes}
-                  </p>
-                )}
-                {selected.excerpt && (
-                  <p className="font-body text-xs text-texto-suave mt-1 leading-relaxed line-clamp-3">
-                    {selected.excerpt}
-                  </p>
-                )}
-              </div>
-            )}
+            {/* Body scrolleable */}
+            <div className="px-5 py-4 overflow-y-auto pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              {/* Vista "más items" del día */}
+              {selected._tipo === '__more' ? (
+                <div className="flex flex-col gap-2">
+                  {selected._items.map((item, i) => {
+                    const { bg, text, label } = chipStyle(item._tipo);
+                    return (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className={`font-body text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 mt-0.5 ${bg} ${text}`}>
+                          {label}
+                        </span>
+                        <p className="font-body text-xs text-texto leading-snug">{item._label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* Detalle individual */
+                <div className="flex flex-col gap-1.5">
+                  <p className="font-body text-sm text-texto font-medium leading-snug">{selected._label}</p>
+                  {selected.category && (
+                    <p className="font-body text-xs text-texto-suave">Categoría: {selected.category}</p>
+                  )}
+                  {(selected.status || selected.estado) && (
+                    <p className="font-body text-xs text-texto-suave">
+                      Estado: {selected.status ?? selected.estado}
+                    </p>
+                  )}
+                  {selected.date && (
+                    <p className="font-body text-xs text-texto-suave">{selected.date}</p>
+                  )}
+                  {selected.mes && (
+                    <p className="font-body text-xs text-texto-suave">
+                      S{selected.semana} · {selected.dia} · {selected.mes}
+                    </p>
+                  )}
+                  {selected.excerpt && (
+                    <p className="font-body text-xs text-texto-suave mt-1 leading-relaxed">
+                      {selected.excerpt}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
