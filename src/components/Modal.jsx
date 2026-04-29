@@ -1,0 +1,53 @@
+import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
+
+export default function Modal({ open, onClose, title, children }) {
+  // Cierra con Escape
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open, onClose]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-texto/30 backdrop-blur-sm"
+            onClick={onClose}
+          />
+
+          {/* Panel */}
+          <motion.div
+            className="relative z-10 w-full md:max-w-lg bg-blanco rounded-t-3xl md:rounded-3xl shadow-xl p-6 md:p-8 max-h-[90vh] overflow-y-auto"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 40, opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-display text-2xl text-texto">{title}</h2>
+              <button
+                onClick={onClose}
+                className="text-texto-suave hover:text-texto transition-colors p-1"
+              >
+                <X size={20} strokeWidth={1.75} />
+              </button>
+            </div>
+            {children}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

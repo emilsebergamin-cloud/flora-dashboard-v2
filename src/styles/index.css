@@ -32,3 +32,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Inputs y textareas con estética Flora */
+.input-flora {
+  @apply w-full bg-beige-1 border border-beige-3 rounded-xl px-4 py-2.5
+         font-body text-sm text-texto placeholder-texto-suave/60
+         focus:outline-none focus:border-rosa-viejo focus:bg-blanco
+         transition-colors;
+}
+
+.textarea-flora {
+  @apply input-flora resize-none;
+}
+
+/* Botón primario */
+.btn-primary {
+  @apply bg-rosa-viejo hover:bg-rosa-hover text-blanco font-body text-sm
+         font-medium px-5 py-2.5 rounded-xl transition-colors;
+}
+
+/* Botón ghost */
+.btn-ghost {
+  @apply text-texto-suave hover:text-texto font-body text-sm px-4 py-2.5
+         rounded-xl hover:bg-beige-1 transition-colors;
+}
