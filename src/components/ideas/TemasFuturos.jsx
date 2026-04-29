@@ -5,9 +5,9 @@ import { addTemaFuturo, updateTemaFuturo, removeTemaFuturo } from '../../service
 import { addContent } from '../../services/collections/content.js';
 
 const PRIORIDADES = [
-  { value: 'alta',  label: 'Alta',  icon: '⚡', cls: 'bg-rosa-claro text-rosa-hover'   },
-  { value: 'media', label: 'Media', icon: '💡', cls: 'bg-verde-claro text-verde-hover' },
-  { value: 'baja',  label: 'Baja',  icon: '·',  cls: 'bg-beige-2 text-texto'           },
+  { value: 'alta',  label: 'Alta',  cls: 'bg-rosa-claro text-rosa-hover'   },
+  { value: 'media', label: 'Media', cls: 'bg-verde-claro text-verde-hover' },
+  { value: 'baja',  label: 'Baja',  cls: 'bg-beige-2 text-texto'           },
 ];
 
 const FORMATOS = ['carrusel', 'reel', 'serie stories', 'post'];
@@ -69,7 +69,7 @@ export default function TemasFuturos() {
               {FORMATOS.map((f) => <option key={f} value={f}>{f}</option>)}
             </select>
             <select className="input-flora" value={draft.prioridad} onChange={(e) => setDraft({ ...draft, prioridad: e.target.value })}>
-              {PRIORIDADES.map((p) => <option key={p.value} value={p.value}>{p.icon} {p.label}</option>)}
+              {PRIORIDADES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
             <input className="input-flora" value={draft.mesTentativo}
               onChange={(e) => setDraft({ ...draft, mesTentativo: e.target.value })}
@@ -91,7 +91,7 @@ export default function TemasFuturos() {
             return (
               <div key={t.id} className={`bg-blanco border rounded-2xl px-5 py-4 flex items-start gap-3 transition-opacity ${t.promovida ? 'opacity-60 border-verde-seco/40' : 'border-beige-2'}`}>
                 <span className={`font-body text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${prio.cls}`}>
-                  {prio.icon} {prio.label}
+                  {prio.label}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-body text-sm text-texto leading-snug">{t.idea}</p>
