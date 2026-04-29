@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, CalendarDays, FileText, Lightbulb, ImagePlay } from 'lucide-react';
+import { Plus, CalendarDays, ChevronDown } from 'lucide-react';
 import { useDashboard } from '../hooks/useDashboard.jsx';
 import { getGreeting, getDateString, getDailyQuote } from '../utils/greeting.js';
 import { addContent } from '../services/collections/content.js';
@@ -9,13 +9,25 @@ import { addFrase } from '../services/collections/ideas.js';
 import { updateWeeklyFocus } from '../services/collections/monthlyPlan.js';
 import Modal from '../components/Modal.jsx';
 
-// Semana del mes actual (1-4)
+// ─── Helpers de fecha ─────────────────────────────────────────────────────────
+
+const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
 function semanaActual() {
-  const dia = new Date().getDate();
-  if (dia <= 7) return 1;
-  if (dia <= 14) return 2;
-  if (dia <= 21) return 3;
+  const d = new Date().getDate();
+  if (d <= 7) return 1;
+  if (d <= 14) return 2;
+  if (d <= 21) return 3;
   return 4;
+}
+
+function mesActual() {
+  const hoy = new Date();
+  return `${MESES_ES[hoy.getMonth()]}-${hoy.getFullYear()}`;
+}
+
+function añoActual() {
+  return new Date().getFullYear();
 }
 
 function esEsteMes(dateStr) {
@@ -23,6 +35,12 @@ function esEsteMes(dateStr) {
   const d = new Date(dateStr);
   const hoy = new Date();
   return d.getMonth() === hoy.getMonth() && d.getFullYear() === hoy.getFullYear();
+}
+
+function mesNum(label) {
+  const [nombre] = (label ?? '').split('-');
+  const idx = MESES_ES.indexOf(nombre);
+  return idx >= 0 ? idx : 0;
 }
 
 // ─── Sub-componentes de modales de alta rápida ───────────────────────────────
@@ -96,7 +114,7 @@ function NuevaStoryModal({ open, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.texto.trim()) return;
-    await update((d) => addStory(d, form));
+    await update((d) => addStory(d, form)); // addStory inyecta mes/año automáticamente
     setForm({ semana: semanaActual(), dia: 'L', categoria: 'Flora cotidiana', texto: '', tipo: 'Foto + texto', estado: 'idea' });
     onClose();
   };
@@ -184,40 +202,49 @@ function NuevaIdeaModal({ open, onClose }) {
 export default function Inicio() {
   const { dashboard, update } = useDashboard();
   const navigate = useNavigate();
-  const [greeting, setGreeting] = useState(getGreeting());
-  const [modal, setModal] = useState(null); // 'post' | 'story' | 'idea'
-  const [focus, setFocus] = useState('');
+  const [greeting, setGreeting]     = useState(getGreeting());
+  const [modal, setModal]           = useState(null);
+  const [focus, setFocus]           = useState('');
+  const [historyOpen, setHistoryOpen] = useState(false);
   const focusTimer = useRef(null);
+
+  const semana    = semanaActual();
+  const mes       = mesActual();
+  const año       = añoActual();
+  const mesNombre = MESES_ES[new Date().getMonth()];
 
   const contentCount = dashboard.content?.length ?? 0;
 
-  // Sincroniza weeklyFocus desde Firestore al montar
-  useEffect(() => { setFocus(dashboard.weeklyFocus ?? ''); }, [dashboard.weeklyFocus]);
+  // Sincroniza el foco de la semana actual desde el array en Firestore
+  useEffect(() => {
+    const arr = Array.isArray(dashboard.weeklyFocus) ? dashboard.weeklyFocus : [];
+    const current = arr.find((f) => f.semana === semana && f.mes === mes);
+    setFocus(current?.texto ?? '');
+  }, [dashboard.weeklyFocus, semana, mes]);
 
-  // Actualiza el saludo cada minuto
   useEffect(() => {
     const id = setInterval(() => setGreeting(getGreeting()), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  // Guarda weeklyFocus con debounce de 800ms
+  // Guarda con debounce de 800ms
   const handleFocusChange = (val) => {
     setFocus(val);
     clearTimeout(focusTimer.current);
     focusTimer.current = setTimeout(() => {
-      update((d) => updateWeeklyFocus(d, val));
+      update((d) => updateWeeklyFocus(d, { semana, mes, año, texto: val }));
     }, 800);
   };
 
   // ── Métricas ──────────────────────────────────────────────────────────────
-  const semana = semanaActual();
-  const content = dashboard.content ?? [];
-  const stories = dashboard.stories ?? [];
+  const content  = dashboard.content ?? [];
+  const stories  = dashboard.stories ?? [];
   const pipeline = dashboard.ideas?.pipeline ?? {};
 
   const postsEsteMes  = content.filter((c) => c.status === 'publicado' && esEsteMes(c.date)).length;
   const enBorrador    = content.filter((c) => c.status === 'borrador').length;
-  const storiesSemana = stories.filter((s) => s.estado === 'lista' && s.semana === semana).length;
+  // Filtra por semana + mes + año para no mezclar meses distintos
+  const storiesSemana = stories.filter((s) => s.estado === 'lista' && s.semana === semana && s.mes === mes).length;
   const ideasPipeline = (pipeline.ideas?.length ?? 0) + (pipeline.proceso?.length ?? 0);
 
   const proximaPublicacion = content
@@ -225,11 +252,23 @@ export default function Inicio() {
     .sort((a, b) => new Date(a.date) - new Date(b.date))[0] ?? null;
 
   const metrics = [
-    { label: 'Posts este mes',      value: postsEsteMes,  color: 'text-rosa-viejo'  },
+    { label: 'Posts este mes',      value: postsEsteMes,  color: 'text-rosa-viejo' },
     { label: 'En borrador',         value: enBorrador,    color: 'text-texto'      },
-    { label: 'Stories esta semana', value: storiesSemana, color: 'text-verde-seco'  },
+    { label: 'Stories esta semana', value: storiesSemana, color: 'text-verde-seco' },
     { label: 'Ideas en proceso',    value: ideasPipeline, color: 'text-texto'      },
   ];
+
+  // ── Foco de la semana ─────────────────────────────────────────────────────
+  const focusHistory = Array.isArray(dashboard.weeklyFocus) ? dashboard.weeklyFocus : [];
+  const focusAnterior = focusHistory
+    .filter((f) => !(f.semana === semana && f.mes === mes) && f.texto?.trim())
+    .sort((a, b) => {
+      if ((b.año ?? 0) !== (a.año ?? 0)) return (b.año ?? 0) - (a.año ?? 0);
+      if (mesNum(b.mes) !== mesNum(a.mes)) return mesNum(b.mes) - mesNum(a.mes);
+      return b.semana - a.semana;
+    });
+
+  const objetivoSemana = dashboard.monthlyPlan?.weeks?.[`s${semana}`]?.objetivo?.trim() ?? '';
 
   return (
     <div className="px-6 md:px-10 py-10 max-w-4xl">
@@ -293,16 +332,59 @@ export default function Inicio() {
         </button>
       </div>
 
-      {/* Recordatorio semanal */}
+      {/* Foco de la semana */}
       <div className="border-l-4 border-rosa-viejo bg-beige-1 rounded-r-2xl px-5 py-4">
-        <p className="font-body text-xs text-texto font-semibold mb-2 uppercase tracking-widest">Foco de la semana</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="font-body text-xs text-texto font-semibold uppercase tracking-widest">
+            Foco de la semana
+          </p>
+          <p className="font-body text-xs text-texto-suave">
+            Semana {semana} · {mesNombre}
+          </p>
+        </div>
+
+        {objetivoSemana && (
+          <p className="font-body text-xs text-texto-suave italic mb-2 leading-snug">
+            Objetivo del plan: "{objetivoSemana}"
+          </p>
+        )}
+
         <textarea
           className="w-full bg-transparent font-body font-medium text-base text-texto placeholder-texto-suave resize-none focus:outline-none"
           rows={2}
           value={focus}
           onChange={(e) => handleFocusChange(e.target.value)}
-          placeholder="Ej: Semana 2 · Tema: Hábitos y piel · Carrusel pendiente de producción"
+          placeholder="¿En qué te enfocás esta semana específicamente?"
         />
+
+        {focusAnterior.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-beige-2">
+            <button
+              onClick={() => setHistoryOpen((v) => !v)}
+              className="flex items-center gap-1 font-body text-xs text-texto-suave hover:text-texto transition-colors"
+            >
+              <ChevronDown
+                size={12}
+                strokeWidth={2}
+                className={`transition-transform ${historyOpen ? 'rotate-180' : ''}`}
+              />
+              Historial ({focusAnterior.length} {focusAnterior.length === 1 ? 'entrada' : 'entradas'})
+            </button>
+
+            {historyOpen && (
+              <div className="flex flex-col gap-2.5 mt-3">
+                {focusAnterior.map((f, i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <span className="font-body text-[11px] text-texto-suave shrink-0 mt-0.5">
+                      S{f.semana} {f.mes}
+                    </span>
+                    <p className="font-body text-xs text-texto-suave leading-snug">{f.texto}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Modales */}

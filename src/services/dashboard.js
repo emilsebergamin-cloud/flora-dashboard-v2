@@ -2,7 +2,7 @@ import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/fires
 import { db, DASHBOARD_DOC_PATH } from './firebase.js';
 
 export const DEFAULT_DASHBOARD = {
-  weeklyFocus: '',
+  weeklyFocus: [],
 
   monthlyPlan: {
     themeCentral: '',
@@ -43,6 +43,8 @@ function mergeWithDefaults(data) {
   return {
     ...DEFAULT_DASHBOARD,
     ...data,
+    // Si Firestore tiene weeklyFocus como string (dato viejo), se descarta y arranca vacío.
+    weeklyFocus: Array.isArray(data.weeklyFocus) ? data.weeklyFocus : [],
     monthlyPlan: {
       ...DEFAULT_DASHBOARD.monthlyPlan,
       ...(data.monthlyPlan ?? {}),
