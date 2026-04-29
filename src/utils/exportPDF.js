@@ -31,6 +31,14 @@ const BASE_STYLES = `
   .frase-text { font-size: 12px; color: #5a4a42; line-height: 1.5; margin-bottom: 4px; }
   .badge { font-size: 10px; background: #f5efe6; color: #5a4a42; padding: 1px 7px; border-radius: 20px;
            display: inline-block; margin-right: 4px; font-family: Arial, sans-serif; }
+  .item-card { background: #fff; border: 1px solid #e2d5c5; border-radius: 8px;
+               padding: 14px 16px; margin-bottom: 12px; page-break-inside: avoid; }
+  .item-title { font-size: 14px; font-weight: bold; color: #5a4a42; margin-bottom: 6px; line-height: 1.3; }
+  .item-meta { margin-bottom: 8px; }
+  .item-section { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #f0e8de; }
+  .item-section label { font-size: 9px; color: #8a7a72; font-family: Arial, sans-serif;
+                        text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 3px; }
+  .item-section p { font-size: 11px; color: #5a4a42; line-height: 1.5; white-space: pre-wrap; }
   .footer { margin-top: 28px; padding-top: 10px; border-top: 1px solid #e2d5c5;
             font-size: 9px; color: #8a7a72; font-family: Arial, sans-serif; text-align: center; }
 `;
@@ -48,26 +56,36 @@ export async function exportPDF(htmlContent, filename) {
     margin: [14, 14, 14, 14],
     html2canvas: { scale: 2, useCORS: true, logging: false },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
   };
 
   const blob = await html2pdf().from(container).set(opt).output('blob');
   const file = new File([blob], filename, { type: 'application/pdf' });
 
-  // Mobile: abre el menú nativo de compartir (WhatsApp, Guardar en archivos, etc.)
+  // Mobile: menú nativo de compartir (WhatsApp, Guardar en archivos, etc.)
   if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file], title: filename });
-    return;
+    try {
+      await navigator.share({ files: [file], title: filename });
+      return;
+    } catch (err) {
+      // El usuario canceló o falló — caemos al fallback
+      if (err.name !== 'AbortError') console.warn('[exportPDF] share failed', err);
+    }
   }
 
-  // Desktop: descarga directa
+  // Fallback universal: abre el PDF en nueva pestaña (ahí tiene download/print propios)
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  const win = window.open(url, '_blank');
+  if (!win) {
+    // Bloqueado por popup blocker → forzar download via anchor
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 // ─── Generadores por sección ──────────────────────────────────────────────────
@@ -122,27 +140,67 @@ export function buildFrasesHTML(frases) {
     <div class="footer">Flora Dashboard v2 · Exportado el ${new Date().toLocaleDateString('es-AR')}</div>`;
 }
 
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 export function buildContenidoHTML(items, categoria = 'Todo') {
   if (!items.length) return '<p class="muted">No hay contenido para exportar.</p>';
   const statusLabel = { idea: 'Idea', borrador: 'Borrador', listo: 'Listo', publicado: 'Publicado' };
-  const rows = items.map((c) => `
-    <tr>
-      <td><strong>${c.title}</strong></td>
-      <td>${c.category ?? '—'}</td>
-      <td>${c.type ?? '—'}</td>
-      <td>${statusLabel[c.status] ?? c.status ?? '—'}</td>
-      <td class="muted">${c.date ?? '—'}</td>
-    </tr>`).join('');
+  const tipoLabel   = { post: 'Post estático', carrusel: 'Carrusel', reel: 'Reel', story: 'Story' };
+  const reelEstado  = { idea: 'Idea', guion: 'Guion', grabado: 'Grabado', editado: 'Editado', publicado: 'Publicado' };
+
+  const cards = items.map((c) => {
+    const isReel     = c.category === 'reel' || c.type === 'reel';
+    const isCarrusel = c.type === 'carrusel';
+    const tags       = Array.isArray(c.tags) ? c.tags : [];
+
+    const meta = [
+      c.category ? `<span class="badge tag-rosa">${escapeHtml(c.category)}</span>` : '',
+      c.type     ? `<span class="badge">${escapeHtml(tipoLabel[c.type] ?? c.type)}</span>` : '',
+      c.status   ? `<span class="badge">${escapeHtml(statusLabel[c.status] ?? c.status)}</span>` : '',
+      c.date     ? `<span class="badge">${escapeHtml(c.date)}</span>` : '',
+    ].filter(Boolean).join('');
+
+    const sections = [];
+    if (c.excerpt)
+      sections.push(`<div class="item-section"><label>Descripción / idea</label><p>${escapeHtml(c.excerpt)}</p></div>`);
+    if (c.cta)
+      sections.push(`<div class="item-section"><label>CTA</label><p>${escapeHtml(c.cta)}</p></div>`);
+    if (tags.length)
+      sections.push(`<div class="item-section"><label>Tags</label><p>${tags.map(escapeHtml).map((t) => `<span class="badge">${t}</span>`).join('')}</p></div>`);
+
+    if (isReel && c.reelData) {
+      const r = c.reelData;
+      const reelFields = [
+        r.concepto         ? `<strong>Concepto:</strong> ${escapeHtml(r.concepto)}` : '',
+        r.audio            ? `<strong>Audio:</strong> ${escapeHtml(r.audio)}` : '',
+        r.textoSuperpuesto ? `<strong>Texto superpuesto:</strong> ${escapeHtml(r.textoSuperpuesto)}` : '',
+        r.apareceFlora     ? `<strong>¿Aparece Flora?:</strong> ${escapeHtml(r.apareceFlora)}` : '',
+        r.estadoProduccion ? `<strong>Producción:</strong> ${escapeHtml(reelEstado[r.estadoProduccion] ?? r.estadoProduccion)}` : '',
+      ].filter(Boolean).join('<br>');
+      if (reelFields)
+        sections.push(`<div class="item-section"><label>Detalles del reel</label><p>${reelFields}</p></div>`);
+    }
+
+    if (isCarrusel && c.notasSlides)
+      sections.push(`<div class="item-section"><label>Notas por slide</label><p>${escapeHtml(c.notasSlides)}</p></div>`);
+
+    return `
+      <div class="item-card">
+        <div class="item-title">${escapeHtml(c.title)}</div>
+        <div class="item-meta">${meta}</div>
+        ${sections.join('')}
+      </div>`;
+  }).join('');
+
   return `
     <div class="header">
       <div class="header-title">Flora Studio</div>
-      <div class="header-sub">Contenido · ${categoria} · ${items.length} ${items.length === 1 ? 'ítem' : 'ítems'}</div>
+      <div class="header-sub">Contenido · ${escapeHtml(categoria)} · ${items.length} ${items.length === 1 ? 'ítem' : 'ítems'}</div>
     </div>
-    <table>
-      <thead><tr>
-        <th>Título</th><th>Categoría</th><th>Tipo</th><th>Estado</th><th>Fecha</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+    ${cards}
     <div class="footer">Flora Dashboard v2 · Exportado el ${new Date().toLocaleDateString('es-AR')}</div>`;
 }
