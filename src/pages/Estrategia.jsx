@@ -17,7 +17,7 @@ export default function Estrategia() {
       <h1 className="font-display text-3xl md:text-4xl text-texto mb-6">Estrategia Mensual</h1>
 
       {/* Sub-tabs */}
-      <div className="flex gap-1 border-b border-beige-2 mb-8">
+      <div className="flex gap-1 border-b border-beige-2 mb-8 overflow-x-auto">
         {TABS.map(({ key, label }) => (
           <button
             key={key}

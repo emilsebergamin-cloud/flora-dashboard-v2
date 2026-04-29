@@ -25,7 +25,10 @@ export default function ContentCard({ item, onEdit, onDelete }) {
   const statusStyle = STATUS_STYLES[item.status]     ?? 'bg-beige-2 text-texto';
 
   return (
-    <div className="group bg-blanco border border-beige-2 rounded-2xl overflow-hidden flex flex-col hover:border-beige-3 hover:shadow-sm transition-all">
+    <div
+      className="group bg-blanco border border-beige-2 rounded-2xl overflow-hidden flex flex-col hover:border-beige-3 hover:shadow-sm transition-all cursor-pointer"
+      onClick={() => onEdit(item)}>
+
       {/* Portada */}
       <div className="relative aspect-[4/3] bg-beige-1 overflow-hidden">
         {item.portada ? (
@@ -35,19 +38,17 @@ export default function ContentCard({ item, onEdit, onDelete }) {
             {item.category === 'reel' ? '▶' : item.category === 'educacional' ? '◈' : '◉'}
           </div>
         )}
-        {/* Acciones hover */}
-        <div className="absolute inset-0 bg-texto/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+        {/* Botones de acción: siempre visibles en mobile, en hover en desktop */}
+        <div className="absolute top-2 right-2 flex gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
           <button
-            onClick={() => onEdit(item)}
-            className="bg-blanco rounded-xl p-2 hover:bg-beige-1 transition-colors"
-          >
-            <Pencil size={15} strokeWidth={1.75} className="text-texto" />
+            onClick={(e) => { e.stopPropagation(); onEdit(item); }}
+            className="bg-blanco/90 rounded-lg p-1.5 hover:bg-blanco transition-colors shadow-sm">
+            <Pencil size={13} strokeWidth={1.75} className="text-texto" />
           </button>
           <button
-            onClick={() => onDelete(item.id)}
-            className="bg-blanco rounded-xl p-2 hover:bg-rosa-claro transition-colors"
-          >
-            <Trash2 size={15} strokeWidth={1.75} className="text-rosa-hover" />
+            onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}
+            className="bg-blanco/90 rounded-lg p-1.5 hover:bg-rosa-claro transition-colors shadow-sm">
+            <Trash2 size={13} strokeWidth={1.75} className="text-rosa-hover" />
           </button>
         </div>
       </div>

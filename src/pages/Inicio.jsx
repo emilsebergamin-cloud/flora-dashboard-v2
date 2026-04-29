@@ -271,7 +271,7 @@ export default function Inicio() {
   const objetivoSemana = dashboard.monthlyPlan?.weeks?.[`s${semana}`]?.objetivo?.trim() ?? '';
 
   return (
-    <div className="px-6 md:px-10 py-10 max-w-4xl">
+    <div className="px-6 md:px-10 py-10 max-w-4xl mx-auto w-full">
 
       {/* Saludo */}
       <h1 className="font-display text-4xl md:text-5xl text-texto mb-1">

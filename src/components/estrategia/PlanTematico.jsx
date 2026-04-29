@@ -88,7 +88,7 @@ export default function PlanTematico() {
           {SEMANAS.map(({ key, label }) => (
             <div key={key} className="bg-blanco border border-beige-2 rounded-2xl px-5 py-4">
               <p className="font-body text-sm text-texto font-medium mb-3">{label}</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-body text-xs text-texto font-medium mb-1.5 block">Objetivo</label>
                   <input

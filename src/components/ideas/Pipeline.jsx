@@ -37,7 +37,7 @@ export default function Pipeline() {
           {(pipeline[key] ?? []).map((item) => (
             <div key={item.id} className="bg-blanco border border-beige-2 rounded-xl px-3 py-2.5 flex items-start gap-2 group">
               <p className="flex-1 font-body text-sm text-texto leading-snug min-w-0 break-words">{item.text}</p>
-              <div className="flex flex-col gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex flex-col gap-1 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 {NEXT[key] && (
                   <button
                     onClick={() => update((d) => movePipeline(d, item.id, key, NEXT[key]))}

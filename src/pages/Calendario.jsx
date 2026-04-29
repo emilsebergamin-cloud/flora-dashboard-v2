@@ -181,7 +181,7 @@ export default function Calendario() {
         <div className="grid grid-cols-7 border-b border-beige-2 bg-beige-1/50">
           {DIAS_LABEL.map((d, i) => (
             <div key={d}
-              className={`py-2 text-center font-body text-xs text-texto-suave font-medium ${i < 6 ? 'border-r border-beige-2' : ''}`}>
+              className={`py-1.5 sm:py-2 text-center font-body text-[10px] sm:text-xs text-texto-suave font-medium ${i < 6 ? 'border-r border-beige-2' : ''}`}>
               {d}
             </div>
           ))}
@@ -199,16 +199,16 @@ export default function Calendario() {
             return (
               <div key={i}
                 className={[
-                  'min-h-[90px] p-1.5 border-b border-beige-2',
+                  'min-h-[60px] sm:min-h-[90px] p-1 sm:p-1.5 border-b border-beige-2',
                   isLastCol ? '' : 'border-r border-beige-2',
                   !day ? 'bg-beige-1/20' : '',
                 ].join(' ')}>
 
                 {day && (
                   <>
-                    <div className="flex justify-end mb-1">
+                    <div className="flex justify-end mb-0.5 sm:mb-1">
                       <span className={[
-                        'font-body text-[11px] w-5 h-5 flex items-center justify-center rounded-full',
+                        'font-body text-[10px] sm:text-[11px] w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full',
                         isToday
                           ? 'bg-rosa-viejo text-blanco font-semibold'
                           : 'text-texto-suave',
@@ -217,7 +217,26 @@ export default function Calendario() {
                       </span>
                     </div>
 
-                    <div className="flex flex-col gap-0.5">
+                    {/* Mobile: puntos de color */}
+                    <div className="flex flex-wrap gap-0.5 sm:hidden">
+                      {items.slice(0, 3).map((item, j) => {
+                        const { bg } = chipStyle(item._tipo);
+                        return (
+                          <button key={j} onClick={() => setSelected(item)}
+                            className={`w-2 h-2 rounded-sm ${bg} hover:opacity-75 transition-opacity`} />
+                        );
+                      })}
+                      {items.length > 3 && (
+                        <button
+                          onClick={() => setSelected({ _tipo: '__more', _day: day, _items: items })}
+                          className="font-body text-[8px] leading-none text-texto-suave hover:text-texto transition-colors">
+                          +{items.length - 3}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Desktop: chips con texto */}
+                    <div className="hidden sm:flex flex-col gap-0.5">
                       {items.slice(0, 3).map((item, j) => {
                         const { bg, text } = chipStyle(item._tipo);
                         return (
