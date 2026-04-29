@@ -4,6 +4,7 @@ import { useDashboard } from '../hooks/useDashboard.jsx';
 import { addContent, updateContent, removeContent, listContent } from '../services/collections/content.js';
 import ContentCard from '../components/ContentCard.jsx';
 import ContentModal from '../components/ContentModal.jsx';
+import { exportPDF, buildContenidoHTML } from '../utils/exportPDF.js';
 
 const FILTERS = [
   { value: 'all',          label: 'Todo'         },
@@ -83,21 +84,9 @@ export default function Contenido() {
     closeModal();
   };
 
-  // Export PDF de la categoría activa
   const handlePDF = async () => {
-    const html2pdf = (await import('html2pdf.js')).default;
     const label = FILTERS.find((f) => f.value === filter)?.label ?? 'Todo';
-    const rows = sorted.map((c) =>
-      `<tr><td>${c.title}</td><td>${c.category}</td><td>${c.type}</td><td>${c.status}</td><td>${c.date ?? ''}</td></tr>`
-    ).join('');
-    const el = document.createElement('div');
-    el.innerHTML = `
-      <h2 style="font-family:serif;margin-bottom:16px">Flora Studio — Contenido: ${label}</h2>
-      <table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-size:12px">
-        <thead><tr><th>Título</th><th>Categoría</th><th>Tipo</th><th>Estado</th><th>Fecha</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`;
-    html2pdf().from(el).set({ filename: `flora-contenido-${filter}.pdf`, margin: 12 }).save();
+    await exportPDF(buildContenidoHTML(sorted, label), `flora-contenido-${filter}.pdf`);
   };
 
   return (

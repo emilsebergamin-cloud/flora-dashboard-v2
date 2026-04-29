@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Plus, Star, Trash2, Pencil } from 'lucide-react';
+import { Plus, Star, Trash2, Pencil, Download } from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard.jsx';
 import { addFrase, updateFrase, removeFrase } from '../../services/collections/ideas.js';
+import { exportPDF, buildFrasesHTML } from '../../utils/exportPDF.js';
 
 export default function Frases() {
   const { dashboard, update } = useDashboard();
@@ -46,11 +47,20 @@ export default function Frases() {
             </button>
           ))}
         </div>
-        {!adding && (
-          <button onClick={() => setAdding(true)} className="btn-primary flex items-center gap-2">
-            <Plus size={14} strokeWidth={2} /> Nueva frase
-          </button>
-        )}
+        <div className="flex gap-2">
+          {items.length > 0 && (
+            <button
+              onClick={() => exportPDF(buildFrasesHTML(dashboard.ideas?.frases ?? []), 'flora-frases.pdf')}
+              className="flex items-center gap-1.5 font-body text-xs text-texto-suave border border-beige-2 px-3 py-1.5 rounded-xl hover:bg-beige-1 hover:text-texto transition-colors">
+              <Download size={13} strokeWidth={1.75} /> PDF
+            </button>
+          )}
+          {!adding && (
+            <button onClick={() => setAdding(true)} className="btn-primary flex items-center gap-2">
+              <Plus size={14} strokeWidth={2} /> Nueva frase
+            </button>
+          )}
+        </div>
       </div>
 
       {adding && (
