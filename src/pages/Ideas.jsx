@@ -28,7 +28,7 @@ export default function Ideas() {
       </section>
 
       {/* Sub-tabs */}
-      <div className="flex gap-1 border-b border-beige-2 mb-8 overflow-x-auto">
+      <div className="flex gap-1 border-b border-beige-2 mb-8 overflow-x-auto overflow-y-hidden">
         {TABS.map(({ key, label }) => (
           <button
             key={key}

@@ -10,6 +10,7 @@ const EMPTY = { nombre: '', link: '', imagen: '', queLePaso: '', comoAdaptar: ''
 function ReferenciaModal({ open, onClose, onSave, initial }) {
   const [form, setForm] = useState(initial ?? EMPTY);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const fileRef = useRef(null);
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
@@ -18,7 +19,9 @@ function ReferenciaModal({ open, onClose, onSave, initial }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError('');
     try { set('imagen', await uploadImage(file, `references/${Date.now()}`)); }
+    catch { setUploadError('No se pudo subir la imagen. Intentá de nuevo.'); }
     finally { setUploading(false); e.target.value = ''; }
   };
 
@@ -67,6 +70,9 @@ function ReferenciaModal({ open, onClose, onSave, initial }) {
           <textarea className="textarea-flora" rows={2} value={form.comoAdaptar}
             onChange={(e) => set('comoAdaptar', e.target.value)} placeholder="A mi tono, a mi voz, a mi paleta…" />
         </div>
+        {uploadError && (
+          <p className="font-body text-xs text-rosa-hover">{uploadError}</p>
+        )}
         <div className="flex justify-end gap-2 pt-2">
           <button type="button" onClick={onClose} className="btn-ghost">Cancelar</button>
           <button type="submit" className="btn-primary">{initial ? 'Guardar' : 'Crear'}</button>

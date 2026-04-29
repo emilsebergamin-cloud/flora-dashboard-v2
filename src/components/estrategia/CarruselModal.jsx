@@ -13,6 +13,7 @@ export default function CarruselModal({ open, onClose, onSave, onDelete, initial
   const [form, setForm] = useState(EMPTY);
   const [uploading, setUploading] = useState(false);
   const [uploadingSlides, setUploadingSlides] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const portadaRef = useRef(null);
   const slidesRef  = useRef(null);
 
@@ -27,7 +28,9 @@ export default function CarruselModal({ open, onClose, onSave, onDelete, initial
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError('');
     try { set('portada', await uploadImage(file, `carruseles/${Date.now()}`)); }
+    catch { setUploadError('No se pudo subir la imagen. Intentá de nuevo.'); }
     finally { setUploading(false); e.target.value = ''; }
   };
 
@@ -35,10 +38,12 @@ export default function CarruselModal({ open, onClose, onSave, onDelete, initial
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
     setUploadingSlides(true);
+    setUploadError('');
     try {
       const urls = await Promise.all(files.map((f) => uploadImage(f, `carruseles/${Date.now()}/slides`)));
       set('imagenes', [...form.imagenes, ...urls]);
-    } finally { setUploadingSlides(false); e.target.value = ''; }
+    } catch { setUploadError('No se pudieron subir las imágenes. Intentá de nuevo.'); }
+    finally { setUploadingSlides(false); e.target.value = ''; }
   };
 
   const removeSlide = (i) => set('imagenes', form.imagenes.filter((_, idx) => idx !== i));
@@ -143,6 +148,10 @@ export default function CarruselModal({ open, onClose, onSave, onDelete, initial
           </button>
           <input ref={slidesRef} type="file" accept="image/*" multiple className="hidden" onChange={handleSlides} />
         </div>
+
+        {uploadError && (
+          <p className="font-body text-xs text-rosa-hover">{uploadError}</p>
+        )}
 
         <div className="flex items-center justify-between pt-2 border-t border-beige-2">
           {isEdit ? (

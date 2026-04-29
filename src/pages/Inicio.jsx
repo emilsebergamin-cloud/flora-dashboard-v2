@@ -30,9 +30,14 @@ function añoActual() {
   return new Date().getFullYear();
 }
 
+function parseLocalDate(str) {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function esEsteMes(dateStr) {
   if (!dateStr) return false;
-  const d = new Date(dateStr);
+  const d = parseLocalDate(dateStr);
   const hoy = new Date();
   return d.getMonth() === hoy.getMonth() && d.getFullYear() === hoy.getFullYear();
 }
@@ -227,6 +232,8 @@ export default function Inicio() {
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => () => clearTimeout(focusTimer.current), []);
+
   // Guarda con debounce de 800ms
   const handleFocusChange = (val) => {
     setFocus(val);
@@ -249,7 +256,7 @@ export default function Inicio() {
 
   const proximaPublicacion = content
     .filter((c) => c.status === 'listo' && c.date)
-    .sort((a, b) => new Date(a.date) - new Date(b.date))[0] ?? null;
+    .sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date))[0] ?? null;
 
   const metrics = [
     { label: 'Posts este mes',      value: postsEsteMes,  color: 'text-rosa-viejo' },
