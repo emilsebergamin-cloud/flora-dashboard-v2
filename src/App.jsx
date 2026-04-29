@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardProvider, useDashboard } from './hooks/useDashboard.jsx';
+import PinGate from './components/PinGate.jsx';
 
 import Layout from './components/Layout.jsx';
 import Inicio from './pages/Inicio.jsx';
@@ -28,10 +29,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <DashboardProvider>
-        <AppRoutes />
-      </DashboardProvider>
-    </BrowserRouter>
+    <PinGate>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <DashboardProvider>
+          <AppRoutes />
+        </DashboardProvider>
+      </BrowserRouter>
+    </PinGate>
   );
 }
