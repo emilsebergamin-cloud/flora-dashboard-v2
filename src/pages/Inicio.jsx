@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Flower2 } from 'lucide-react';
 import { useDashboard } from '../hooks/useDashboard.jsx';
 import { getGreeting, getDateString, getDailyQuote } from '../utils/greeting.js';
 
@@ -17,8 +18,9 @@ export default function Inicio() {
   return (
     <div className="min-h-full px-6 md:px-10 py-10 max-w-4xl">
       {/* Saludo */}
-      <h1 className="font-display text-4xl md:text-5xl text-texto mb-1">
-        {greeting} <em>Flora</em> ✿
+      <h1 className="font-display text-4xl md:text-5xl text-texto mb-1 flex items-center gap-3">
+        {greeting} <em>Flora</em>
+        <Flower2 size={32} strokeWidth={1.25} className="text-rosa-viejo" />
       </h1>
       <p className="font-body text-sm text-texto-suave mb-10">
         {getDateString(contentCount)}
