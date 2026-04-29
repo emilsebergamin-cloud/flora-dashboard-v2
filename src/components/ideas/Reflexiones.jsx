@@ -62,7 +62,7 @@ export default function Reflexiones() {
                 </button>
               </div>
               <p className="font-body text-sm text-texto leading-relaxed whitespace-pre-wrap">{r.text}</p>
-              {r.tag && <span className="inline-block mt-3 font-body text-[11px] bg-rosa-claro text-rosa-hover px-2 py-0.5 rounded-full">{r.tag}</span>}
+              {r.tag && <span className="inline-block mt-3 font-body text-[11px] bg-rosa-claro text-texto px-2 py-0.5 rounded-full">{r.tag}</span>}
             </article>
           ))}
         </div>

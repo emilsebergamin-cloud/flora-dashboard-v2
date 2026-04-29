@@ -6,8 +6,8 @@ import CarruselModal from './CarruselModal.jsx';
 
 const STATUS_STYLES = {
   'idea':          'bg-beige-2 text-texto',
-  'en producción': 'bg-rosa-claro text-rosa-hover',
-  'listo':         'bg-verde-claro text-verde-hover',
+  'en producción': 'bg-rosa-claro text-texto',
+  'listo':         'bg-verde-claro text-texto',
   'publicado':     'bg-verde-seco text-blanco',
 };
 

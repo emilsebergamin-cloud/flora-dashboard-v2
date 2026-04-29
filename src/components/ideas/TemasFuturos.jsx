@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Plus, Trash2, ArrowUpRight, Check } from 'lucide-react';
+import { Plus, Trash2, ArrowUpRight, Check, Zap, Equal, Minus } from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard.jsx';
 import { addTemaFuturo, updateTemaFuturo, removeTemaFuturo } from '../../services/collections/ideas.js';
 import { addContent } from '../../services/collections/content.js';
 
 const PRIORIDADES = [
-  { value: 'alta',  label: 'Alta',  cls: 'bg-rosa-claro text-rosa-hover'   },
-  { value: 'media', label: 'Media', cls: 'bg-verde-claro text-verde-hover' },
-  { value: 'baja',  label: 'Baja',  cls: 'bg-beige-2 text-texto'           },
+  { value: 'alta',  label: 'Alta',  Icon: Zap,   cls: 'bg-rosa-claro text-texto'  },
+  { value: 'media', label: 'Media', Icon: Equal,  cls: 'bg-verde-claro text-texto' },
+  { value: 'baja',  label: 'Baja',  Icon: Minus,  cls: 'bg-beige-2 text-texto'     },
 ];
 
 const FORMATOS = ['carrusel', 'reel', 'serie stories', 'post'];
@@ -90,15 +90,15 @@ export default function TemasFuturos() {
             const prio = PRIORIDADES.find((p) => p.value === t.prioridad) ?? PRIORIDADES[1];
             return (
               <div key={t.id} className={`bg-blanco border rounded-2xl px-5 py-4 flex items-start gap-3 transition-opacity ${t.promovida ? 'opacity-60 border-verde-seco/40' : 'border-beige-2'}`}>
-                <span className={`font-body text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${prio.cls}`}>
-                  {prio.label}
+                <span className={`font-body text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1 ${prio.cls}`}>
+                  <prio.Icon size={10} strokeWidth={2.5} />{prio.label}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-body text-sm text-texto leading-snug">{t.idea}</p>
                   <div className="flex gap-2 mt-1.5 flex-wrap">
                     <span className="font-body text-[11px] bg-beige-1 text-texto px-2 py-0.5 rounded-full">{t.formato}</span>
                     {t.mesTentativo && <span className="font-body text-[11px] bg-beige-1 text-texto px-2 py-0.5 rounded-full">{t.mesTentativo}</span>}
-                    {t.promovida && <span className="font-body text-[11px] bg-verde-claro text-verde-hover px-2 py-0.5 rounded-full flex items-center gap-1"><Check size={11} strokeWidth={2.5} /> promovido</span>}
+                    {t.promovida && <span className="font-body text-[11px] bg-verde-claro text-texto px-2 py-0.5 rounded-full flex items-center gap-1"><Check size={11} strokeWidth={2.5} /> promovido</span>}
                   </div>
                 </div>
                 <div className="flex gap-1 shrink-0">

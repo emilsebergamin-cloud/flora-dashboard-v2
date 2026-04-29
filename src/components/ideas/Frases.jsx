@@ -75,7 +75,7 @@ export default function Frases() {
                 <p className="font-body text-sm text-texto leading-snug">{f.text}</p>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {f.uso && <span className="font-body text-[11px] bg-beige-1 text-texto px-2 py-0.5 rounded-full">{f.uso}</span>}
-                  {f.tag && <span className="font-body text-[11px] bg-rosa-claro text-rosa-hover px-2 py-0.5 rounded-full">{f.tag}</span>}
+                  {f.tag && <span className="font-body text-[11px] bg-rosa-claro text-texto px-2 py-0.5 rounded-full">{f.tag}</span>}
                 </div>
               </div>
               <button onClick={() => update((d) => removeFrase(d, f.id))}

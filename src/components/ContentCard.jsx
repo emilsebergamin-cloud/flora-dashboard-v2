@@ -2,17 +2,17 @@ import { Pencil, Trash2 } from 'lucide-react';
 
 const CATEGORY_STYLES = {
   'orgánico':      'bg-beige-2 text-texto',
-  'educacional':   'bg-verde-claro text-verde-hover',
-  'informativo':   'bg-rosa-claro text-rosa-hover',
-  'inspiracional': 'bg-rosa-claro text-rosa-hover',
-  'conversión':    'bg-verde-claro text-verde-hover',
+  'educacional':   'bg-verde-claro text-texto',
+  'informativo':   'bg-rosa-claro text-texto',
+  'inspiracional': 'bg-rosa-claro text-texto',
+  'conversión':    'bg-verde-claro text-texto',
   'reel':          'bg-beige-3 text-texto',
 };
 
 const STATUS_STYLES = {
   'idea':      'bg-beige-2 text-texto',
-  'borrador':  'bg-rosa-claro text-rosa-hover',
-  'listo':     'bg-verde-claro text-verde-hover',
+  'borrador':  'bg-rosa-claro text-texto',
+  'listo':     'bg-verde-claro text-texto',
   'publicado': 'bg-verde-seco text-blanco',
 };
 

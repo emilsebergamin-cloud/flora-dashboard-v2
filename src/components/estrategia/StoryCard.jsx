@@ -4,7 +4,7 @@ import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 const ESTADOS = ['idea', 'lista', 'publicada'];
 const STATUS_STYLES = {
   idea:      'bg-beige-2 text-texto',
-  lista:     'bg-verde-claro text-verde-hover',
+  lista:     'bg-verde-claro text-texto',
   publicada: 'bg-verde-seco text-blanco',
 };
 const CATEGORIAS = ['Flora cotidiana', 'Flora trabaja', 'Flora estudia', 'Flora hábitos', 'Flora informa', 'Interacción'];

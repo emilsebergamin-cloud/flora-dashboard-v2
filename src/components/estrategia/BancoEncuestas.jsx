@@ -120,7 +120,7 @@ export default function BancoEncuestas() {
                 <div className="flex gap-2 flex-wrap">
                   <span className="font-body text-xs bg-beige-1 text-texto px-2.5 py-1 rounded-full">A: {enc.opcionA}</span>
                   <span className="font-body text-xs bg-beige-1 text-texto px-2.5 py-1 rounded-full">B: {enc.opcionB}</span>
-                  {enc.tema && <span className="font-body text-xs bg-rosa-claro text-rosa-hover px-2.5 py-1 rounded-full">{enc.tema}</span>}
+                  {enc.tema && <span className="font-body text-xs bg-rosa-claro text-texto px-2.5 py-1 rounded-full">{enc.tema}</span>}
                 </div>
               </div>
               <div className="flex gap-2 items-center shrink-0" onClick={(e) => e.stopPropagation()}>
