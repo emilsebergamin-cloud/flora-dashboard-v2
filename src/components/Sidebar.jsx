@@ -1,20 +1,28 @@
 import { NavLink } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  Target,
+  ImagePlay,
+  Lightbulb,
+  CalendarDays,
+  Palette,
+} from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/',            label: 'Inicio',             icon: '✦' },
-  { to: '/estrategia',  label: 'Estrategia Mensual', icon: '◈' },
-  { to: '/contenido',   label: 'Contenido',           icon: '◉' },
-  { to: '/ideas',       label: 'Ideas',               icon: '◇' },
-  { to: '/calendario',  label: 'Calendario',          icon: '▦' },
-  { to: '/moodboard',   label: 'Moodboard',           icon: '◫' },
+  { to: '/',            label: 'Inicio',             Icon: LayoutDashboard },
+  { to: '/estrategia',  label: 'Estrategia Mensual', Icon: Target          },
+  { to: '/contenido',   label: 'Contenido',          Icon: ImagePlay       },
+  { to: '/ideas',       label: 'Ideas',              Icon: Lightbulb       },
+  { to: '/calendario',  label: 'Calendario',         Icon: CalendarDays    },
+  { to: '/moodboard',   label: 'Moodboard',          Icon: Palette         },
 ];
 
 export default function Sidebar({ syncStatus }) {
   const syncDot = {
-    synced:   'bg-verde-seco',
-    syncing:  'bg-rosa-viejo animate-pulse',
-    offline:  'bg-rosa-hover',
-    error:    'bg-rosa-hover',
+    synced:  'bg-verde-seco',
+    syncing: 'bg-rosa-viejo animate-pulse',
+    offline: 'bg-rosa-hover',
+    error:   'bg-rosa-hover',
   }[syncStatus] ?? 'bg-beige-3';
 
   return (
@@ -30,7 +38,7 @@ export default function Sidebar({ syncStatus }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
-        {NAV_ITEMS.map(({ to, label, icon }) => (
+        {NAV_ITEMS.map(({ to, label, Icon }) => (
           <NavLink
             key={to}
             to={to}
@@ -44,7 +52,7 @@ export default function Sidebar({ syncStatus }) {
               ].join(' ')
             }
           >
-            <span className="text-base leading-none">{icon}</span>
+            <Icon size={16} strokeWidth={1.75} />
             <span>{label}</span>
           </NavLink>
         ))}
