@@ -39,10 +39,33 @@ function dashboardRef() {
   return doc(db, DASHBOARD_DOC_PATH.collection, DASHBOARD_DOC_PATH.doc);
 }
 
+function mergeWithDefaults(data) {
+  return {
+    ...DEFAULT_DASHBOARD,
+    ...data,
+    monthlyPlan: {
+      ...DEFAULT_DASHBOARD.monthlyPlan,
+      ...(data.monthlyPlan ?? {}),
+      weeks: {
+        ...DEFAULT_DASHBOARD.monthlyPlan.weeks,
+        ...(data.monthlyPlan?.weeks ?? {}),
+      },
+    },
+    ideas: {
+      ...DEFAULT_DASHBOARD.ideas,
+      ...(data.ideas ?? {}),
+      pipeline: {
+        ...DEFAULT_DASHBOARD.ideas.pipeline,
+        ...(data.ideas?.pipeline ?? {}),
+      },
+    },
+  };
+}
+
 export async function loadDashboard() {
   const snap = await getDoc(dashboardRef());
   if (!snap.exists()) return { ...DEFAULT_DASHBOARD };
-  return { ...DEFAULT_DASHBOARD, ...snap.data() };
+  return mergeWithDefaults(snap.data());
 }
 
 export async function saveDashboard(data) {
@@ -55,7 +78,7 @@ export function subscribeDashboard(onChange, onError) {
     dashboardRef(),
     (snap) => {
       if (snap.exists()) {
-        onChange({ ...DEFAULT_DASHBOARD, ...snap.data() });
+        onChange(mergeWithDefaults(snap.data()));
       } else {
         onChange({ ...DEFAULT_DASHBOARD });
       }

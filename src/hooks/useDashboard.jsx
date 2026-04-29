@@ -29,7 +29,14 @@ export function DashboardProvider({ children }) {
   // Si el save falla, revierte el estado.
   async function update(mutator) {
     const prev = dashboard;
-    const next = mutator(dashboard);
+    let next;
+    try {
+      next = mutator(dashboard);
+    } catch (err) {
+      console.error('[useDashboard] mutator failed', err);
+      setSyncStatus('error');
+      return;
+    }
     setDashboard(next);
     setSyncStatus('syncing');
     try {
