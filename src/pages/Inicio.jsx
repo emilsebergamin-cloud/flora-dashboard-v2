@@ -297,7 +297,7 @@ export default function Inicio() {
       <div className="border-l-4 border-rosa-viejo bg-beige-1 rounded-r-2xl px-5 py-4">
         <p className="font-body text-xs text-texto font-semibold mb-2 uppercase tracking-widest">Foco de la semana</p>
         <textarea
-          className="w-full bg-transparent font-display italic text-lg text-texto placeholder-texto-suave resize-none focus:outline-none"
+          className="w-full bg-transparent font-body font-medium text-base text-texto placeholder-texto-suave resize-none focus:outline-none"
           rows={2}
           value={focus}
           onChange={(e) => handleFocusChange(e.target.value)}
