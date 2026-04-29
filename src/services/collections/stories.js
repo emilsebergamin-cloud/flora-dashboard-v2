@@ -28,7 +28,7 @@ export function listStories(dashboard, filters = {}) {
   if (filters.estado) items = items.filter((s) => s.estado === filters.estado);
   return items.sort((a, b) => {
     if (a.semana !== b.semana) return a.semana - b.semana;
-    const DIAS = ['L', 'M', 'Mi', 'J', 'V', 'S'];
+    const DIAS = ['L', 'M', 'Mi', 'J', 'V', 'S', 'D'];
     return DIAS.indexOf(a.dia) - DIAS.indexOf(b.dia);
   });
 }

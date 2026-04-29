@@ -114,7 +114,7 @@ function NuevaStoryModal({ open, onClose }) {
           <div>
             <label className="font-body text-xs text-texto font-medium mb-1.5 block">Día</label>
             <select className="input-flora" value={form.dia} onChange={(e) => set('dia', e.target.value)}>
-              {['L', 'M', 'Mi', 'J', 'V', 'S'].map((d) => <option key={d} value={d}>{d}</option>)}
+              {['L', 'M', 'Mi', 'J', 'V', 'S', 'D'].map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
         </div>
