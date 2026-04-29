@@ -19,7 +19,7 @@ export default function Estrategia() {
       <h1 className="font-display text-3xl md:text-4xl text-texto mb-6">Estrategia Mensual</h1>
 
       {/* Tabs — una sola fila scrolleable */}
-      <div className="flex gap-1 border-b border-beige-2 mb-8 overflow-x-auto">
+      <div className="flex gap-1 border-b border-beige-2 mb-8 overflow-x-auto overflow-y-hidden">
         {TABS.map(({ key, label }) => (
           <button
             key={key}
