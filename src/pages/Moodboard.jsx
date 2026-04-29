@@ -1,8 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
 import { Plus, X, Trash2, ZoomIn, Upload, Loader2, Images } from 'lucide-react';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
-import { storage } from '../services/firebase.js';
+import { uploadImage } from '../services/storage.js';
 import { useDashboard } from '../hooks/useDashboard.jsx';
 import { addMoodItem, removeMoodItem } from '../services/collections/mood.js';
 import Modal from '../components/Modal.jsx';
@@ -106,16 +105,17 @@ function ImageCard({ item, onDelete, onZoom }) {
 // ─── Modal nueva imagen ───────────────────────────────────────────────────────
 
 function AddImageModal({ open, onClose, onSave }) {
-  const [file,      setFile]      = useState(null);
-  const [preview,   setPreview]   = useState(null);
-  const [titulo,    setTitulo]    = useState('');
-  const [tags,      setTags]      = useState([]);
-  const [tagInput,  setTagInput]  = useState('');
-  const [uploading, setUploading] = useState(false);
+  const [file,        setFile]        = useState(null);
+  const [preview,     setPreview]     = useState(null);
+  const [titulo,      setTitulo]      = useState('');
+  const [tags,        setTags]        = useState([]);
+  const [tagInput,    setTagInput]    = useState('');
+  const [uploading,   setUploading]   = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const fileRef = useRef(null);
 
   const reset = () => {
-    setFile(null); setPreview(null); setTitulo(''); setTags([]); setTagInput('');
+    setFile(null); setPreview(null); setTitulo(''); setTags([]); setTagInput(''); setUploadError('');
   };
 
   const handleClose = () => { reset(); onClose(); };
@@ -123,6 +123,7 @@ function AddImageModal({ open, onClose, onSave }) {
   const handleFile = (f) => {
     if (!f || !f.type.startsWith('image/')) return;
     setFile(f);
+    setUploadError('');
     const reader = new FileReader();
     reader.onload = (e) => setPreview(e.target.result);
     reader.readAsDataURL(f);
@@ -141,17 +142,15 @@ function AddImageModal({ open, onClose, onSave }) {
   const handleSave = async () => {
     if (!file) return;
     setUploading(true);
+    setUploadError('');
     try {
-      const id   = uuid();
-      const ext  = file.name.split('.').pop();
-      const sRef = storageRef(storage, `moodboard/${id}.${ext}`);
-      await uploadBytes(sRef, file);
-      const url  = await getDownloadURL(sRef);
+      const url = await uploadImage(file, `moodboard/${uuid()}`);
       await onSave({ tipo: 'imagen', url, titulo: titulo.trim(), tags });
       reset();
       onClose();
     } catch (err) {
       console.error('[Moodboard] upload failed', err);
+      setUploadError('No se pudo subir la imagen. Verificá tu conexión e intentá de nuevo.');
     } finally {
       setUploading(false);
     }
@@ -221,6 +220,10 @@ function AddImageModal({ open, onClose, onSave }) {
           ))}
         </div>
       </div>
+
+      {uploadError && (
+        <p className="font-body text-xs text-rosa-hover mb-3">{uploadError}</p>
+      )}
 
       <div className="flex gap-2">
         <button onClick={handleClose}
