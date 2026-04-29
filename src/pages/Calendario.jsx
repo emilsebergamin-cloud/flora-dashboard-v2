@@ -49,7 +49,7 @@ const TIPO_STYLES = {
   post:     { bg: 'bg-rosa-claro',  text: 'text-texto',  label: 'Post'     },
   carrusel: { bg: 'bg-beige-3',     text: 'text-texto',  label: 'Carrusel' },
   reel:     { bg: 'bg-verde-claro', text: 'text-texto',  label: 'Reel'     },
-  story:    { bg: 'bg-rosa-viejo',  text: 'text-blanco', label: 'Story'    },
+  story:    { bg: 'bg-verde-seco',  text: 'text-blanco', label: 'Story'    },
 };
 
 function chipStyle(tipo) {
@@ -233,13 +233,13 @@ export default function Calendario() {
                       {items.slice(0, 3).map((item, j) => {
                         const { bg } = chipStyle(item._tipo);
                         return (
-                          <button key={j} onClick={() => setSelected(item)}
+                          <button key={j} onClick={() => setSelected({ _day: day, _items: items })}
                             className={`w-2.5 h-2.5 rounded-sm ${bg} hover:opacity-75 transition-opacity`} />
                         );
                       })}
                       {items.length > 3 && (
                         <button
-                          onClick={() => setSelected({ _tipo: '__more', _day: day, _items: items })}
+                          onClick={() => setSelected({ _day: day, _items: items })}
                           className="font-body text-[8px] leading-none text-texto-suave hover:text-texto transition-colors">
                           +{items.length - 3}
                         </button>
@@ -252,7 +252,7 @@ export default function Calendario() {
                         const { bg, text } = chipStyle(item._tipo);
                         return (
                           <button key={j}
-                            onClick={() => setSelected(item)}
+                            onClick={() => setSelected({ _day: day, _items: items })}
                             className={`w-full text-left font-body text-[11px] font-medium px-2 py-[3px] rounded-md truncate leading-tight ${bg} ${text} hover:opacity-80 transition-opacity`}>
                             {item._label}
                           </button>
@@ -260,7 +260,7 @@ export default function Calendario() {
                       })}
                       {items.length > 3 && (
                         <button
-                          onClick={() => setSelected({ _tipo: '__more', _day: day, _items: items })}
+                          onClick={() => setSelected({ _day: day, _items: items })}
                           className="font-body text-[10px] text-texto-suave hover:text-texto pl-1 text-left transition-colors">
                           +{items.length - 3} más
                         </button>
@@ -274,81 +274,57 @@ export default function Calendario() {
         </div>
       </div>
 
-      {/* Panel de detalle al hacer click en un chip */}
+      {/* Panel de detalle del día */}
       {selected && (
         <div
-          className="fixed inset-0 z-[60] flex items-end md:items-center justify-center md:p-4 bg-texto/20 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-texto/20 backdrop-blur-sm"
           onClick={() => setSelected(null)}>
           <div
-            className="bg-blanco border border-beige-2 rounded-t-2xl md:rounded-2xl w-full max-w-sm shadow-lg max-h-[85vh] flex flex-col"
+            className="bg-blanco border border-beige-2 rounded-2xl w-full max-w-sm shadow-lg max-h-[80vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}>
 
-            {/* Drag handle (solo mobile) */}
-            <div className="md:hidden flex justify-center pt-2 pb-1 shrink-0">
-              <span className="w-10 h-1 rounded-full bg-beige-3" />
-            </div>
-
-            {/* Header sticky */}
-            <div className="flex items-start justify-between px-5 pt-3 pb-3 shrink-0 border-b border-beige-2">
-              {selected._tipo === '__more' ? (
-                <p className="font-body text-sm text-texto font-medium">
-                  {selected._day} {MESES_ES[month]} — todos los ítems
-                </p>
-              ) : (
-                <span className={`font-body text-[11px] font-medium px-2 py-0.5 rounded-full ${chipStyle(selected._tipo).bg} ${chipStyle(selected._tipo).text}`}>
-                  {chipStyle(selected._tipo).label}
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0 border-b border-beige-2">
+              <p className="font-body text-sm text-texto font-medium">
+                {selected._day} de {MESES_ES[month]}
+                <span className="text-texto-suave font-normal ml-1.5">
+                  · {selected._items.length} {selected._items.length === 1 ? 'ítem' : 'ítems'}
                 </span>
-              )}
+              </p>
               <button onClick={() => setSelected(null)}
                 className="text-texto-suave hover:text-texto p-1 transition-colors ml-2 shrink-0">
                 <X size={15} strokeWidth={2} />
               </button>
             </div>
 
-            {/* Body scrolleable */}
-            <div className="px-5 py-4 overflow-y-auto pb-[calc(1rem+env(safe-area-inset-bottom))]">
-              {/* Vista "más items" del día */}
-              {selected._tipo === '__more' ? (
-                <div className="flex flex-col gap-2">
-                  {selected._items.map((item, i) => {
-                    const { bg, text, label } = chipStyle(item._tipo);
-                    return (
-                      <div key={i} className="flex items-start gap-2">
-                        <span className={`font-body text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 mt-0.5 ${bg} ${text}`}>
-                          {label}
-                        </span>
-                        <p className="font-body text-xs text-texto leading-snug">{item._label}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                /* Detalle individual */
-                <div className="flex flex-col gap-1.5">
-                  <p className="font-body text-sm text-texto font-medium leading-snug">{selected._label}</p>
-                  {selected.category && (
-                    <p className="font-body text-xs text-texto-suave">Categoría: {selected.category}</p>
-                  )}
-                  {(selected.status || selected.estado) && (
-                    <p className="font-body text-xs text-texto-suave">
-                      Estado: {selected.status ?? selected.estado}
-                    </p>
-                  )}
-                  {selected.date && (
-                    <p className="font-body text-xs text-texto-suave">{selected.date}</p>
-                  )}
-                  {selected.mes && (
-                    <p className="font-body text-xs text-texto-suave">
-                      S{selected.semana} · {selected.dia} · {selected.mes}
-                    </p>
-                  )}
-                  {selected.excerpt && (
-                    <p className="font-body text-xs text-texto-suave mt-1 leading-relaxed">
-                      {selected.excerpt}
-                    </p>
-                  )}
-                </div>
-              )}
+            {/* Body scrolleable: lista de ítems del día */}
+            <div className="px-5 py-4 overflow-y-auto flex flex-col gap-3">
+              {selected._items.map((item, i) => {
+                const { bg, text, label } = chipStyle(item._tipo);
+                return (
+                  <div key={i} className="flex flex-col gap-1.5 pb-3 border-b border-beige-2 last:border-b-0 last:pb-0">
+                    <div className="flex items-start gap-2">
+                      <span className={`font-body text-[10px] font-medium px-2 py-0.5 rounded shrink-0 mt-0.5 ${bg} ${text}`}>
+                        {label}
+                      </span>
+                      <p className="font-body text-sm text-texto font-medium leading-snug">{item._label}</p>
+                    </div>
+                    {item.category && (
+                      <p className="font-body text-xs text-texto-suave pl-1">Categoría: {item.category}</p>
+                    )}
+                    {(item.status || item.estado) && (
+                      <p className="font-body text-xs text-texto-suave pl-1">
+                        Estado: {item.status ?? item.estado}
+                      </p>
+                    )}
+                    {item.excerpt && (
+                      <p className="font-body text-xs text-texto-suave pl-1 leading-relaxed">
+                        {item.excerpt}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
