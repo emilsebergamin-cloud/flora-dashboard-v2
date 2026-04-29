@@ -45,12 +45,12 @@ function NuevoPostModal({ open, onClose }) {
     <Modal open={open} onClose={onClose} title="Nuevo post">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="font-body text-xs text-texto-suave mb-1.5 block">Título</label>
+          <label className="font-body text-xs text-texto font-medium mb-1.5 block">Título</label>
           <input className="input-flora" value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="Ej: Mitos del masaje facial" autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="font-body text-xs text-texto-suave mb-1.5 block">Categoría</label>
+            <label className="font-body text-xs text-texto font-medium mb-1.5 block">Categoría</label>
             <select className="input-flora" value={form.category} onChange={(e) => set('category', e.target.value)}>
               <option value="orgánico">Orgánico</option>
               <option value="educacional">Educacional</option>
@@ -61,7 +61,7 @@ function NuevoPostModal({ open, onClose }) {
             </select>
           </div>
           <div>
-            <label className="font-body text-xs text-texto-suave mb-1.5 block">Formato</label>
+            <label className="font-body text-xs text-texto font-medium mb-1.5 block">Formato</label>
             <select className="input-flora" value={form.type} onChange={(e) => set('type', e.target.value)}>
               <option value="post">Post estático</option>
               <option value="carrusel">Carrusel</option>
@@ -71,7 +71,7 @@ function NuevoPostModal({ open, onClose }) {
           </div>
         </div>
         <div>
-          <label className="font-body text-xs text-texto-suave mb-1.5 block">Estado</label>
+          <label className="font-body text-xs text-texto font-medium mb-1.5 block">Estado</label>
           <select className="input-flora" value={form.status} onChange={(e) => set('status', e.target.value)}>
             <option value="idea">Idea</option>
             <option value="borrador">Borrador</option>
@@ -106,20 +106,20 @@ function NuevaStoryModal({ open, onClose }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="font-body text-xs text-texto-suave mb-1.5 block">Semana</label>
+            <label className="font-body text-xs text-texto font-medium mb-1.5 block">Semana</label>
             <select className="input-flora" value={form.semana} onChange={(e) => set('semana', Number(e.target.value))}>
               {[1, 2, 3, 4].map((s) => <option key={s} value={s}>Semana {s}</option>)}
             </select>
           </div>
           <div>
-            <label className="font-body text-xs text-texto-suave mb-1.5 block">Día</label>
+            <label className="font-body text-xs text-texto font-medium mb-1.5 block">Día</label>
             <select className="input-flora" value={form.dia} onChange={(e) => set('dia', e.target.value)}>
               {['L', 'M', 'Mi', 'J', 'V', 'S'].map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
         </div>
         <div>
-          <label className="font-body text-xs text-texto-suave mb-1.5 block">Categoría</label>
+          <label className="font-body text-xs text-texto font-medium mb-1.5 block">Categoría</label>
           <select className="input-flora" value={form.categoria} onChange={(e) => set('categoria', e.target.value)}>
             {['Flora cotidiana', 'Flora trabaja', 'Flora estudia', 'Flora hábitos', 'Flora informa', 'Interacción'].map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -127,7 +127,7 @@ function NuevaStoryModal({ open, onClose }) {
           </select>
         </div>
         <div>
-          <label className="font-body text-xs text-texto-suave mb-1.5 block">Texto o idea</label>
+          <label className="font-body text-xs text-texto font-medium mb-1.5 block">Texto o idea</label>
           <textarea className="textarea-flora" rows={3} value={form.texto} onChange={(e) => set('texto', e.target.value)} placeholder="¿De qué trata esta story?" autoFocus />
         </div>
         <div className="flex justify-end gap-2 pt-2">
@@ -157,16 +157,16 @@ function NuevaIdeaModal({ open, onClose }) {
     <Modal open={open} onClose={onClose} title="Nueva idea">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="font-body text-xs text-texto-suave mb-1.5 block">Frase o idea</label>
+          <label className="font-body text-xs text-texto font-medium mb-1.5 block">Frase o idea</label>
           <textarea className="textarea-flora" rows={3} value={form.text} onChange={(e) => set('text', e.target.value)} placeholder="Ej: Tu piel no es un problema a resolver" autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="font-body text-xs text-texto-suave mb-1.5 block">Uso posible</label>
+            <label className="font-body text-xs text-texto font-medium mb-1.5 block">Uso posible</label>
             <input className="input-flora" value={form.uso} onChange={(e) => set('uso', e.target.value)} placeholder="caption, story, bio…" />
           </div>
           <div>
-            <label className="font-body text-xs text-texto-suave mb-1.5 block">Etiqueta</label>
+            <label className="font-body text-xs text-texto font-medium mb-1.5 block">Etiqueta</label>
             <input className="input-flora" value={form.tag} onChange={(e) => set('tag', e.target.value)} placeholder="piel, hábitos…" />
           </div>
         </div>
@@ -226,9 +226,9 @@ export default function Inicio() {
 
   const metrics = [
     { label: 'Posts este mes',      value: postsEsteMes,  color: 'text-rosa-viejo'  },
-    { label: 'En borrador',         value: enBorrador,    color: 'text-texto-suave' },
+    { label: 'En borrador',         value: enBorrador,    color: 'text-texto'      },
     { label: 'Stories esta semana', value: storiesSemana, color: 'text-verde-seco'  },
-    { label: 'Ideas en pipeline',   value: ideasPipeline, color: 'text-texto-suave' },
+    { label: 'Ideas en pipeline',   value: ideasPipeline, color: 'text-texto'      },
   ];
 
   return (
@@ -238,7 +238,7 @@ export default function Inicio() {
       <h1 className="font-display text-4xl md:text-5xl text-texto mb-1">
         {greeting} <em>Flora</em>
       </h1>
-      <p className="font-body text-sm text-texto-suave mb-8">
+      <p className="font-body text-sm text-texto mb-8">
         {getDateString(contentCount)}
       </p>
 
@@ -253,7 +253,7 @@ export default function Inicio() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         {metrics.map(({ label, value, color }) => (
           <div key={label} className="bg-blanco border border-beige-2 rounded-2xl px-4 py-5">
-            <p className="font-body text-xs text-texto-suave mb-1">{label}</p>
+            <p className="font-body text-xs text-texto font-medium mb-1">{label}</p>
             <p className={`font-display text-3xl ${color}`}>{value}</p>
           </div>
         ))}
@@ -266,9 +266,9 @@ export default function Inicio() {
             <CalendarDays size={16} strokeWidth={1.75} className="text-verde-hover" />
           </div>
           <div className="min-w-0">
-            <p className="font-body text-xs text-texto-suave mb-0.5">Próxima publicación</p>
+            <p className="font-body text-xs text-texto-suave font-medium mb-0.5">Próxima publicación</p>
             <p className="font-body text-sm text-texto font-medium truncate">{proximaPublicacion.title}</p>
-            <p className="font-body text-xs text-texto-suave">{proximaPublicacion.date} · {proximaPublicacion.type}</p>
+            <p className="font-body text-xs text-texto-suave font-medium">{proximaPublicacion.date} · {proximaPublicacion.type}</p>
           </div>
         </div>
       )}
@@ -295,9 +295,9 @@ export default function Inicio() {
 
       {/* Recordatorio semanal */}
       <div className="border-l-4 border-rosa-viejo bg-beige-1 rounded-r-2xl px-5 py-4">
-        <p className="font-body text-xs text-texto-suave mb-2 uppercase tracking-widest">Foco de la semana</p>
+        <p className="font-body text-xs text-texto font-semibold mb-2 uppercase tracking-widest">Foco de la semana</p>
         <textarea
-          className="w-full bg-transparent font-display italic text-lg text-texto placeholder-texto-suave/50 resize-none focus:outline-none"
+          className="w-full bg-transparent font-display italic text-lg text-texto placeholder-texto-suave resize-none focus:outline-none"
           rows={2}
           value={focus}
           onChange={(e) => handleFocusChange(e.target.value)}

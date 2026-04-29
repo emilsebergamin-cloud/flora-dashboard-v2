@@ -7,7 +7,7 @@ export default function PagePlaceholder({ title, subtitle, color = 'bg-rosa-clar
         {subtitle && (
           <p className="font-body text-texto-suave text-base">{subtitle}</p>
         )}
-        <p className="font-body text-xs text-texto-suave/50 mt-8 tracking-widest uppercase">
+        <p className="font-body text-xs text-texto-suave mt-8 tracking-widest uppercase">
           Próximamente — Fase 2
         </p>
       </div>

@@ -14,7 +14,7 @@
   --beige-3: #e2d5c5;
   --crema: #faf7f2;
   --texto: #5a4a42;
-  --texto-suave: #8a7a72;
+  --texto-suave: #6e5c55;
   --blanco: #fffcf8;
 }
 
@@ -36,7 +36,7 @@ body {
 /* Inputs y textareas con estética Flora */
 .input-flora {
   @apply w-full bg-beige-1 border border-beige-3 rounded-xl px-4 py-2.5
-         font-body text-sm text-texto placeholder-texto-suave/60
+         font-body text-sm text-texto placeholder-texto-suave
          focus:outline-none focus:border-rosa-viejo focus:bg-blanco
          transition-colors;
 }
@@ -53,6 +53,6 @@ body {
 
 /* Botón ghost */
 .btn-ghost {
-  @apply text-texto-suave hover:text-texto font-body text-sm px-4 py-2.5
+  @apply text-texto hover:text-texto font-body text-sm px-4 py-2.5
          rounded-xl hover:bg-beige-1 transition-colors;
 }

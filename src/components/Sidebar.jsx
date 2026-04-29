@@ -60,7 +60,7 @@ export default function Sidebar({ syncStatus }) {
 
       {/* Footer */}
       <div className="px-6 py-4 border-t border-beige-2">
-        <p className="font-body text-[11px] text-texto-suave/50 tracking-wide">Flora Studio v2</p>
+        <p className="font-body text-xs text-texto-suave tracking-wide">Flora Studio v2</p>
       </div>
     </aside>
   );
