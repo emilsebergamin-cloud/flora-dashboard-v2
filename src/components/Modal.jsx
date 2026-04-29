@@ -15,7 +15,7 @@ export default function Modal({ open, onClose, title, children }) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end md:items-center justify-center"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -29,7 +29,7 @@ export default function Modal({ open, onClose, title, children }) {
 
           {/* Panel */}
           <motion.div
-            className="relative z-10 w-full md:max-w-lg bg-blanco rounded-t-3xl md:rounded-3xl shadow-xl p-6 md:p-8 max-h-[90vh] overflow-y-auto"
+            className="relative z-10 w-full max-w-lg bg-blanco rounded-3xl shadow-xl p-6 md:p-8 max-h-[88vh] overflow-y-auto"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 40, opacity: 0 }}
