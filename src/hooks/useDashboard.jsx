@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { subscribeDashboard, saveDashboard, DEFAULT_DASHBOARD } from '../services/dashboard.js';
+import { runMigrations } from '../services/migrations.js';
 
 const DashboardContext = createContext(null);
 
@@ -7,12 +8,29 @@ export function DashboardProvider({ children }) {
   const [dashboard, setDashboard] = useState(DEFAULT_DASHBOARD);
   const [loading, setLoading]     = useState(true);
   const [syncStatus, setSyncStatus] = useState('syncing');
-  const pendingRef = useRef(null);
+  const migratedRef = useRef(false); // las migraciones solo corren una vez
 
   useEffect(() => {
     const unsub = subscribeDashboard(
-      (data) => {
-        setDashboard(data);
+      async (data) => {
+        // Primera carga: correr migraciones si es necesario
+        if (!migratedRef.current) {
+          migratedRef.current = true;
+          const { data: migrated, changed } = runMigrations(data);
+          if (changed) {
+            console.info('[migrations] datos migrados, guardando en Firestore…');
+            try {
+              await saveDashboard(migrated);
+            } catch (err) {
+              console.error('[migrations] error al guardar migraciones', err);
+            }
+            setDashboard(migrated);
+          } else {
+            setDashboard(data);
+          }
+        } else {
+          setDashboard(data);
+        }
         setLoading(false);
         setSyncStatus('synced');
       },
