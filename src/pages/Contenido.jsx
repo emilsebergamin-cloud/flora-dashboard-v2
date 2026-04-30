@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Plus, Download, LayoutGrid, Grid3x3 } from 'lucide-react';
+import { Plus, LayoutGrid, Grid3x3 } from 'lucide-react';
 import { useDashboard } from '../hooks/useDashboard.jsx';
 import { addContent, updateContent, removeContent, listContent } from '../services/collections/content.js';
 import ContentCard from '../components/ContentCard.jsx';
 import ContentModal from '../components/ContentModal.jsx';
-import { exportPDF, buildContenidoHTML } from '../utils/exportPDF.js';
 
 const FILTERS = [
   { value: 'all',          label: 'Todo'         },
@@ -84,11 +83,6 @@ export default function Contenido() {
     closeModal();
   };
 
-  const handlePDF = async () => {
-    const label = FILTERS.find((f) => f.value === filter)?.label ?? 'Todo';
-    await exportPDF(buildContenidoHTML(sorted, label), `flora-contenido-${filter}.pdf`);
-  };
-
   return (
     <div className="px-6 md:px-10 py-10">
 
@@ -96,9 +90,6 @@ export default function Contenido() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-3xl md:text-4xl text-texto">Contenido</h1>
         <div className="flex items-center gap-2">
-          <button onClick={handlePDF} className="flex items-center gap-1.5 btn-ghost text-xs px-3 py-2">
-            <Download size={14} strokeWidth={1.75} /> PDF
-          </button>
           <button onClick={openNew} className="btn-primary flex items-center gap-2">
             <Plus size={15} strokeWidth={2} /> Nuevo
           </button>

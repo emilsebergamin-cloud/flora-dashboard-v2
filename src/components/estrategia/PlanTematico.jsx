@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Download } from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard.jsx';
 import { updateMonthlyPlan } from '../../services/collections/monthlyPlan.js';
-import { exportPDF, buildPlanHTML } from '../../utils/exportPDF.js';
 
 const SEMANAS = [
   { key: 's1', label: 'Semana 1' },
@@ -51,19 +49,8 @@ export default function PlanTematico() {
     save(themeCentral, updated);
   };
 
-  const handlePDF = async () => {
-    await exportPDF(buildPlanHTML(plan), 'flora-plan-tematico.pdf');
-  };
-
   return (
     <div className="flex flex-col gap-8 max-w-2xl">
-
-      <div className="flex justify-end">
-        <button onClick={handlePDF}
-          className="flex items-center gap-1.5 font-body text-xs text-texto-suave border border-beige-2 px-3 py-1.5 rounded-xl hover:bg-beige-1 hover:text-texto transition-colors">
-          <Download size={13} strokeWidth={1.75} /> Exportar PDF
-        </button>
-      </div>
 
       {/* Tema central */}
       <div>
