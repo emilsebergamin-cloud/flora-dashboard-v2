@@ -14,6 +14,27 @@ const FORMATOS = ['carrusel', 'reel', 'serie stories', 'post'];
 
 const EMPTY = { idea: '', formato: 'carrusel', prioridad: 'media', mesTentativo: '' };
 
+function FormFields({ values, set }) {
+  return (
+    <>
+      <textarea className="textarea-flora" rows={2} value={values.idea} autoFocus
+        onChange={(e) => set({ ...values, idea: e.target.value })}
+        placeholder="Idea o tema futuro" />
+      <div className="grid grid-cols-3 gap-3">
+        <select className="input-flora" value={values.formato} onChange={(e) => set({ ...values, formato: e.target.value })}>
+          {FORMATOS.map((f) => <option key={f} value={f}>{f}</option>)}
+        </select>
+        <select className="input-flora" value={values.prioridad} onChange={(e) => set({ ...values, prioridad: e.target.value })}>
+          {PRIORIDADES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+        </select>
+        <input className="input-flora" value={values.mesTentativo}
+          onChange={(e) => set({ ...values, mesTentativo: e.target.value })}
+          placeholder="Mes tentativo" />
+      </div>
+    </>
+  );
+}
+
 export default function TemasFuturos() {
   const { dashboard, update } = useDashboard();
   const [adding, setAdding]     = useState(false);
@@ -65,25 +86,6 @@ export default function TemasFuturos() {
       return removeTemaFuturo(withContent, tema.id);
     });
   };
-
-  const FormFields = ({ values, set }) => (
-    <>
-      <textarea className="textarea-flora" rows={2} value={values.idea} autoFocus
-        onChange={(e) => set({ ...values, idea: e.target.value })}
-        placeholder="Idea o tema futuro" />
-      <div className="grid grid-cols-3 gap-3">
-        <select className="input-flora" value={values.formato} onChange={(e) => set({ ...values, formato: e.target.value })}>
-          {FORMATOS.map((f) => <option key={f} value={f}>{f}</option>)}
-        </select>
-        <select className="input-flora" value={values.prioridad} onChange={(e) => set({ ...values, prioridad: e.target.value })}>
-          {PRIORIDADES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-        </select>
-        <input className="input-flora" value={values.mesTentativo}
-          onChange={(e) => set({ ...values, mesTentativo: e.target.value })}
-          placeholder="Mes tentativo" />
-      </div>
-    </>
-  );
 
   return (
     <div className="flex flex-col gap-4">
