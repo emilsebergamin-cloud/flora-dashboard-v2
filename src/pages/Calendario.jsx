@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Plus } from 'lucide-react';
 import { useDashboard } from '../hooks/useDashboard.jsx';
+import { addContent, updateContent, removeContent } from '../services/collections/content.js';
+import ContentModal from '../components/ContentModal.jsx';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -67,13 +69,44 @@ const FILTROS = [
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function Calendario() {
-  const { dashboard } = useDashboard();
+  const { dashboard, update } = useDashboard();
   const hoy = new Date();
 
   const [year,  setYear]    = useState(hoy.getFullYear());
   const [month, setMonth]   = useState(hoy.getMonth());
   const [filtro, setFiltro] = useState('todos');
   const [selected, setSelected] = useState(null);
+  const [modalOpen, setModalOpen]   = useState(false);
+  const [editing, setEditing]       = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [newDate, setNewDate]       = useState('');
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  const openNewForDay = (day) => {
+    const dateStr = `${year}-${pad(month + 1)}-${pad(day)}`;
+    setNewDate(dateStr);
+    setEditing(null);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => { setModalOpen(false); setEditing(null); setNewDate(''); };
+
+  const handleSave = async (data) => {
+    if (editing?.id) {
+      await update((d) => updateContent(d, editing.id, data));
+    } else {
+      await update((d) => addContent(d, data));
+    }
+    closeModal();
+  };
+
+  const handleDelete = (id) => setDeleteConfirm(id);
+  const confirmDelete = async () => {
+    await update((d) => removeContent(d, deleteConfirm));
+    setDeleteConfirm(null);
+    closeModal();
+  };
 
   const prevMonth = () => {
     if (month === 0) { setMonth(11); setYear((y) => y - 1); }
@@ -207,7 +240,7 @@ export default function Calendario() {
             return (
               <div key={i}
                 className={[
-                  'min-h-[60px] sm:min-h-[100px] p-1 sm:p-1.5 border-b border-beige-2 transition-colors',
+                  'min-h-[60px] sm:min-h-[100px] p-1 sm:p-1.5 border-b border-beige-2 transition-colors group',
                   isLastCol ? '' : 'border-r border-beige-2',
                   !day                    ? 'bg-beige-1/20' :
                   hasItems && !isToday    ? 'bg-beige-1/50' : '',
@@ -215,7 +248,14 @@ export default function Calendario() {
 
                 {day && (
                   <>
-                    <div className="flex justify-end mb-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <button
+                        onClick={() => openNewForDay(day)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-texto-suave hover:text-texto p-0.5 rounded"
+                        title="Agregar contenido"
+                      >
+                        <Plus size={11} strokeWidth={2} />
+                      </button>
                       <span className={[
                         'font-body text-[10px] sm:text-[11px] w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full',
                         isToday
@@ -273,6 +313,30 @@ export default function Calendario() {
           })}
         </div>
       </div>
+
+      {/* Modal crear/editar contenido */}
+      <ContentModal
+        open={modalOpen}
+        onClose={closeModal}
+        onSave={handleSave}
+        onDelete={handleDelete}
+        initial={editing ?? (newDate ? { date: newDate } : null)}
+      />
+
+      {/* Confirm delete */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="absolute inset-0 bg-texto/30 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />
+          <div className="relative z-10 bg-blanco rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
+            <p className="font-body text-texto font-medium mb-1">¿Eliminar este contenido?</p>
+            <p className="font-body text-sm text-texto-suave mb-6">Esta acción no se puede deshacer.</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setDeleteConfirm(null)} className="btn-ghost">Cancelar</button>
+              <button onClick={confirmDelete} className="font-body text-sm font-medium px-5 py-2.5 rounded-xl bg-rosa-hover text-blanco hover:bg-rosa-viejo transition-colors">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Panel de detalle del día */}
       {selected && (
