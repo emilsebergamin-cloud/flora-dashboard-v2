@@ -1,5 +1,11 @@
-import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
-import { db, DASHBOARD_DOC_PATH } from './firebase.js';
+// ── MODO DEMO ──────────────────────────────────────────────────────────────
+// Versión autónoma: NO se conecta a Firebase. Los datos viven en localStorage
+// del navegador del visitante, partiendo de datos ficticios de ejemplo.
+// Así la demo es pública, anonimizada y sin riesgo de exponer datos reales.
+
+import { SEED_DASHBOARD } from './seedData.js';
+
+const STORAGE_KEY = 'demo_dashboard_v1';
 
 export const DEFAULT_DASHBOARD = {
   weeklyFocus: [],
@@ -35,15 +41,10 @@ export const DEFAULT_DASHBOARD = {
   mood: [],
 };
 
-function dashboardRef() {
-  return doc(db, DASHBOARD_DOC_PATH.collection, DASHBOARD_DOC_PATH.doc);
-}
-
 function mergeWithDefaults(data) {
   return {
     ...DEFAULT_DASHBOARD,
     ...data,
-    // Si Firestore tiene weeklyFocus como string (dato viejo), se descarta y arranca vacío.
     weeklyFocus: Array.isArray(data.weeklyFocus) ? data.weeklyFocus : [],
     monthlyPlan: {
       ...DEFAULT_DASHBOARD.monthlyPlan,
@@ -65,27 +66,35 @@ function mergeWithDefaults(data) {
   };
 }
 
+function readStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return mergeWithDefaults(JSON.parse(raw));
+  } catch (err) {
+    console.warn('[demo] no se pudo leer localStorage', err);
+  }
+  // Primera visita: sembrar datos de ejemplo
+  const seeded = mergeWithDefaults(SEED_DASHBOARD);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded)); } catch { /* ignore */ }
+  return seeded;
+}
+
 export async function loadDashboard() {
-  const snap = await getDoc(dashboardRef());
-  if (!snap.exists()) return { ...DEFAULT_DASHBOARD };
-  return mergeWithDefaults(snap.data());
+  return readStorage();
 }
 
 export async function saveDashboard(data) {
   const { updatedAt: _skip, ...clean } = data;
-  await setDoc(dashboardRef(), { ...clean, updatedAt: serverTimestamp() }, { merge: true });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
 }
 
-export function subscribeDashboard(onChange, onError) {
-  return onSnapshot(
-    dashboardRef(),
-    (snap) => {
-      if (snap.exists()) {
-        onChange(mergeWithDefaults(snap.data()));
-      } else {
-        onChange({ ...DEFAULT_DASHBOARD });
-      }
-    },
-    onError,
-  );
+// API compatible con la versión Firebase: llama onChange una vez con los datos
+// y devuelve una función de desuscripción (no-op en modo demo).
+export function subscribeDashboard(onChange, _onError) {
+  try {
+    onChange(readStorage());
+  } catch (err) {
+    if (_onError) _onError(err);
+  }
+  return () => {};
 }

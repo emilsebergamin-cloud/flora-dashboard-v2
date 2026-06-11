@@ -233,7 +233,7 @@ export default function ContentModal({ open, onClose, onSave, onDelete, initial 
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="font-body text-xs text-texto font-medium mb-1.5 block">¿Aparece Flora?</label>
+                <label className="font-body text-xs text-texto font-medium mb-1.5 block">¿Aparece en cámara?</label>
                 <select className="input-flora" value={form.reelData.apareceFlora} onChange={(e) => setReel('apareceFlora', e.target.value)}>
                   <option>Sí</option><option>No</option><option>Solo manos</option>
                 </select>

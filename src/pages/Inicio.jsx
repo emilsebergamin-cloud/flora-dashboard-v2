@@ -112,7 +112,7 @@ function NuevoPostModal({ open, onClose }) {
 
 function NuevaStoryModal({ open, onClose }) {
   const { update } = useDashboard();
-  const [form, setForm] = useState({ semana: semanaActual(), dia: 'L', categoria: 'Flora cotidiana', texto: '', tipo: 'Foto + texto', estado: 'idea' });
+  const [form, setForm] = useState({ semana: semanaActual(), dia: 'L', categoria: 'Día a día', texto: '', tipo: 'Foto + texto', estado: 'idea' });
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
@@ -120,7 +120,7 @@ function NuevaStoryModal({ open, onClose }) {
     e.preventDefault();
     if (!form.texto.trim()) return;
     await update((d) => addStory(d, form)); // addStory inyecta mes/año automáticamente
-    setForm({ semana: semanaActual(), dia: 'L', categoria: 'Flora cotidiana', texto: '', tipo: 'Foto + texto', estado: 'idea' });
+    setForm({ semana: semanaActual(), dia: 'L', categoria: 'Día a día', texto: '', tipo: 'Foto + texto', estado: 'idea' });
     onClose();
   };
 
@@ -144,7 +144,7 @@ function NuevaStoryModal({ open, onClose }) {
         <div>
           <label className="font-body text-xs text-texto font-medium mb-1.5 block">Categoría</label>
           <select className="input-flora" value={form.categoria} onChange={(e) => set('categoria', e.target.value)}>
-            {['Flora cotidiana', 'Flora trabaja', 'Flora estudia', 'Flora hábitos', 'Flora informa', 'Interacción'].map((c) => (
+            {['Día a día', 'Detrás de escena', 'Educativo', 'Tips', 'Novedades', 'Interacción'].map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
@@ -282,7 +282,7 @@ export default function Inicio() {
 
       {/* Saludo */}
       <h1 className="font-display text-4xl md:text-5xl text-texto mb-1">
-        {greeting} <em>Flora</em>
+        {greeting} <em>Estudio Demo</em>
       </h1>
       <p className="font-body text-sm text-texto mb-8">
         {getDateString(contentCount)}

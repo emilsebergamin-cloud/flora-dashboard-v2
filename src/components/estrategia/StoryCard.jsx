@@ -7,7 +7,7 @@ const STATUS_STYLES = {
   lista:     'bg-verde-claro text-texto',
   publicada: 'bg-verde-seco text-blanco',
 };
-const CATEGORIAS = ['Flora cotidiana', 'Flora trabaja', 'Flora estudia', 'Flora hábitos', 'Flora informa', 'Interacción'];
+const CATEGORIAS = ['Día a día', 'Detrás de escena', 'Educativo', 'Tips', 'Novedades', 'Interacción'];
 const TIPOS = ['Foto + texto', 'Video (manos/proceso)', 'Texto solo', 'Encuesta', 'Cajita de preguntas', 'Dato disruptivo', 'Anticipo de contenido'];
 
 export default function StoryCard({ story, onUpdate, onDelete }) {

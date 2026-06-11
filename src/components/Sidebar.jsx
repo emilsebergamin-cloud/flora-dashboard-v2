@@ -29,7 +29,7 @@ export default function Sidebar({ syncStatus }) {
     <aside className="hidden md:flex flex-col w-56 shrink-0 min-h-screen bg-blanco border-r border-beige-2">
       {/* Header */}
       <div className="flex items-center gap-2.5 px-6 py-6 border-b border-beige-2">
-        <span className="font-display text-2xl text-texto">Flora Studio</span>
+        <span className="font-display text-2xl text-texto">Gestión RRSS</span>
         <span
           className={`ml-auto w-2 h-2 rounded-full ${syncDot}`}
           title={syncStatus === 'synced' ? 'Sincronizado' : 'Sincronizando…'}
@@ -60,7 +60,7 @@ export default function Sidebar({ syncStatus }) {
 
       {/* Footer */}
       <div className="px-6 py-4 border-t border-beige-2">
-        <p className="font-body text-xs text-texto-suave tracking-wide">Flora Studio v2</p>
+        <p className="font-body text-xs text-texto-suave tracking-wide">Demo · Gestión de redes</p>
       </div>
     </aside>
   );
